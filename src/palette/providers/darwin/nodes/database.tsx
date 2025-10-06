@@ -1,5 +1,6 @@
 import { Database } from 'lucide-react';
-import { ElementKind } from '../../../../diagram';
+import { DiagramNode, ElementKind } from '../../../../diagram';
+import { DialogRender } from '../../../../dialog/DialogRender';
 import { DiagramElementType } from '../../../DiagramElementType';
 
 export type DatabaseProps = {
@@ -11,6 +12,19 @@ export class DatabaseElement implements DiagramElementType<DatabaseProps> {
   kind: ElementKind = 'database';
   title = 'Database';
   paletteIcon = (<Database size={18} />);
+
+  constructor(public readonly render: DialogRender) {}
+
+  async open(props: DatabaseProps, node: DiagramNode): Promise<void> {
+    await this.render.showEdit({
+      id: node.id,
+      value: props,
+      title: node.name || node.id,
+      errors: node.errors,
+      warns: node.warns,
+      definition: this.definition(),
+    });
+  }
 
   definition() {
     return {

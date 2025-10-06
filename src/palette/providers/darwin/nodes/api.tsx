@@ -3,6 +3,7 @@ import { Code } from 'lucide-react';
 import { DiagramElementType } from '../../../DiagramElementType';
 import type { ElementKind } from '../../../../diagram';
 import { DiagramModel, DiagramNode } from '../../../../diagram';
+import { DialogRender } from '../../../../dialog/DialogRender';
 
 export type ApiProps = {
   protocol: 'http' | 'https' | 'grpc';
@@ -17,6 +18,19 @@ export class ApiElement implements DiagramElementType<ApiProps> {
   title = 'API';
   paletteIcon = (<Code size={18} />);
 
+  constructor(public readonly render: DialogRender) {}
+
+  async open(props: ApiProps, node: DiagramNode): Promise<void> {
+    await this.render.showEdit({
+      id: node.id,
+      value: props,
+      title: node.name || node.id,
+      errors: node.errors,
+      warns: node.warns,
+      definition: this.definition(),
+    });
+  }
+ 
   definition() {
     return {
       schema: {
@@ -80,7 +94,7 @@ export class ApiElement implements DiagramElementType<ApiProps> {
     return true;
   }
 
-  renderShape? ( _props: ApiProps, content: ReactNode ): ReactNode {
+  renderShape?(_props: ApiProps, content: ReactNode): ReactNode {
     // API redonda, etiqueta debajo (ya la pone el editor)
     return (
       <div

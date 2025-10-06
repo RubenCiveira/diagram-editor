@@ -1,6 +1,7 @@
 import { LayoutTemplate } from 'lucide-react';
-import { ElementKind } from '../../../../diagram';
+import { DiagramNode, ElementKind } from '../../../../diagram';
 import { DiagramElementType } from '../../../DiagramElementType';
+import { DialogRender } from '../../../../dialog/DialogRender';
 
 export type ShellUiProps = { routeBase: string; authRequired?: boolean };
 
@@ -8,6 +9,20 @@ export class ShellUiElement implements DiagramElementType<ShellUiProps> {
   kind: ElementKind = 'shellUi';
   title = 'Shell UI';
   paletteIcon = (<LayoutTemplate size={18} />);
+  
+  constructor(public readonly render: DialogRender) {
+  }
+
+  async open(props: ShellUiProps, node: DiagramNode): Promise<void> {
+    await this.render.showEdit({
+      id: node.id,
+      value: props,
+      title: node.name || node.id,
+      errors: node.errors,
+      warns: node.warns,
+      definition: this.definition(),
+    });
+  }
 
   definition() {
     return {

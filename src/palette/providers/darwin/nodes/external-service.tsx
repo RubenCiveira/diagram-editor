@@ -1,6 +1,7 @@
 import { ExternalLink } from 'lucide-react';
-import { ElementKind } from '../../../../diagram';
+import { DiagramNode, ElementKind } from '../../../../diagram';
 import { DiagramElementType } from '../../../DiagramElementType';
+import { DialogRender } from '../../../../dialog/DialogRender';
 
 export type ExternalServiceProps = {
   serviceType: 'db' | 'microservice' | 'elk' | 'trx' | 'oauth' | 'queue' | 'cache' | 'storage';
@@ -13,6 +14,20 @@ export class ExternalServiceElement implements DiagramElementType<ExternalServic
   kind: ElementKind = 'externalService';
   title = 'Servicio REST';
   paletteIcon = (<ExternalLink size={18} />);
+  
+  constructor(public readonly render: DialogRender) {
+  }
+
+  async open(props: ExternalServiceProps, node: DiagramNode): Promise<void> {
+    await this.render.showEdit({
+      id: node.id,
+      value: props,
+      title: node.name || node.id,
+      errors: node.errors,
+      warns: node.warns,
+      definition: this.definition(),
+    });
+  }
 
   definition() {
     return {

@@ -1,6 +1,8 @@
 import { ReactNode } from 'react';
 import { Router } from 'lucide-react';
 import { DiagramElementType } from '../../../DiagramElementType';
+import { DialogRender } from '../../../../dialog/DialogRender';
+import { DiagramNode } from '../../../../diagram';
 
 export type GatewayProps = {
   namePattern?: string;
@@ -13,6 +15,19 @@ export class GatewayElement implements DiagramElementType<GatewayProps> {
   kind = 'gateway' as const;
   title = 'Gateway';
   paletteIcon = (<Router size={18} />);
+
+  constructor(public readonly render: DialogRender) {}
+
+  async open(props: GatewayProps, node: DiagramNode): Promise<void> {
+    await this.render.showEdit({
+      id: node.id,
+      value: props,
+      title: node.name || node.id,
+      errors: node.errors,
+      warns: node.warns,
+      definition: this.definition(),
+    });
+  }
 
   definition() {
     return {
@@ -67,7 +82,7 @@ export class GatewayElement implements DiagramElementType<GatewayProps> {
     return { width: 96, height: 96 };
   }
 
-  renderShape? ( _props: GatewayProps, content: ReactNode ): ReactNode {
+  renderShape?(_props: GatewayProps, content: ReactNode): ReactNode {
     return (
       <div
         style={{

@@ -1,4 +1,3 @@
-// src/export/buildDiagramReport.ts
 import { DiagramDescriptor, NodeDescriptor } from '../../../../diagram/descriptor';
 import { DiagramElementType, NodeCategory } from '../../../DiagramElementType';
 

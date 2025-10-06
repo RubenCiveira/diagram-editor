@@ -1,3 +1,4 @@
+import { DialogRender } from '../../../dialog/DialogRender';
 import { DiagramElementType } from '../../DiagramElementType';
 import { ApiElement } from './nodes/api';
 import { DatabaseElement } from './nodes/database';
@@ -13,18 +14,20 @@ import { OAuthProxyElement } from './nodes/oauth-proxy';
 import { ShellUiElement } from './nodes/shell-ui';
 import { DarwinUser } from './nodes/user';
 
+const dialog = new DialogRender();
+
 export const DARWIN_NODES = [
-  new DarwinUser(),
-  new ShellUiElement(),
-  new MicroFrontElement(),
-  new GatewayElement(),
-  new GatewayProxyElement(),
-  new OAuthProxyElement(),
-  new MicroserviceElement(),
-  new DatabaseElement(),
-  new ExternalServiceElement(),
-  new ExternalSoapElement(),
-  new ExternalTransactionElement(),
-  new ApiElement(),
-  new NoteElement(),
+  new DarwinUser(dialog),
+  new ShellUiElement(dialog),
+  new MicroFrontElement(dialog),
+  new GatewayElement(dialog),
+  new GatewayProxyElement(dialog),
+  new OAuthProxyElement(dialog),
+  new MicroserviceElement(dialog),
+  new DatabaseElement(dialog),
+  new ExternalServiceElement(dialog),
+  new ExternalSoapElement(dialog),
+  new ExternalTransactionElement(dialog),
+  new ApiElement(dialog),
+  new NoteElement(dialog),
 ] as DiagramElementType[];

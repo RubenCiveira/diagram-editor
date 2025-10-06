@@ -2,6 +2,7 @@ import { CircleUserRound, Contact, ShieldUser, User } from 'lucide-react';
 import type { DiagramElementType } from '../../../DiagramElementType';
 import type { DiagramModel, DiagramNode, ElementKind } from '../../../../diagram';
 import { ReactNode } from 'react';
+import { DialogRender } from '../../../../dialog/DialogRender';
 
 export type UserProps = {
   category: 'Empleado' | 'Cliente' | 'Publico' | 'Operador';
@@ -11,6 +12,20 @@ export class DarwinUser implements DiagramElementType<UserProps> {
   kind: ElementKind = 'darwin-user';
   title = 'Usuario';
   paletteIcon = (<User size={18} />);
+  
+  constructor(public readonly render: DialogRender) {
+  }
+
+  async open(props: UserProps, node: DiagramNode): Promise<void> {
+    await this.render.showEdit({
+      id: node.id,
+      value: props,
+      title: node.name || node.id,
+      errors: node.errors,
+      warns: node.warns,
+      definition: this.definition(),
+    });
+  }
 
   definition() {
     return {

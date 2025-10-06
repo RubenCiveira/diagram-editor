@@ -1,6 +1,7 @@
-import { Shield } from "lucide-react";
-import type { DiagramElementType } from "../../../DiagramElementType";
-import type { ElementKind } from "../../../../diagram";
+import { Shield } from 'lucide-react';
+import type { DiagramElementType } from '../../../DiagramElementType';
+import type { DiagramNode, ElementKind } from '../../../../diagram';
+import { DialogRender } from '../../../../dialog/DialogRender';
 
 export type OAuthProxyProps = {
   path: string;
@@ -10,35 +11,46 @@ export type OAuthProxyProps = {
   cacheTtl?: number;
 };
 
-export class OAuthProxyElement
-  implements DiagramElementType<OAuthProxyProps>
-{
-  kind: ElementKind = "remoteOAuth";
-  title = "OAuth";
+export class OAuthProxyElement implements DiagramElementType<OAuthProxyProps> {
+  kind: ElementKind = 'remoteOAuth';
+  title = 'OAuth';
   paletteIcon = (<Shield size={18} />);
 
-    definition() {
+  constructor(public readonly render: DialogRender) {}
+
+  async open(props: OAuthProxyProps, node: DiagramNode): Promise<void> {
+    await this.render.showEdit({
+      id: node.id,
+      value: props,
+      title: node.name || node.id,
+      errors: node.errors,
+      warns: node.warns,
+      definition: this.definition(),
+    });
+  }
+
+  definition() {
     return {
       schema: {
-        type: "object",
-        title: "Proxy Rule",
+        type: 'object',
+        title: 'Proxy Rule',
         properties: {
-          path: { type: "string", title: "Path", description: "/api/users" },
-          targetUrl: { type: "string", title: "Target URL", format: "url" },
-          rewrite: { type: "string", title: "Rewrite", description: "^/api -> /" },
-          cors: { type: "boolean", title: "CORS" },
-          cacheTtl: { type: "integer", title: "Cache TTL (s)" },
+          path: { type: 'string', title: 'Path', description: '/api/users' },
+          targetUrl: { type: 'string', title: 'Target URL', format: 'url' },
+          rewrite: { type: 'string', title: 'Rewrite', description: '^/api -> /' },
+          cors: { type: 'boolean', title: 'CORS' },
+          cacheTtl: { type: 'integer', title: 'Cache TTL (s)' },
         },
-        required: ["path", "targetUrl"],
-      }
-    }
+        required: ['path', 'targetUrl'],
+      },
+    };
   }
 
   nodeIcon() {
-    return (<Shield size={50} />);
+    return <Shield size={50} />;
   }
   category() {
-    return "component" as const;
+    return 'component' as const;
   }
   acceptsIncoming() {
     return true;
@@ -48,9 +60,9 @@ export class OAuthProxyElement
   }
   defaultProps(): OAuthProxyProps {
     return {
-      path: "/api",
-      targetUrl: "http://svc:8080/",
-      rewrite: "^/api -> /",
+      path: '/api',
+      targetUrl: 'http://svc:8080/',
+      rewrite: '^/api -> /',
       cors: true,
       cacheTtl: 0,
     };
@@ -59,6 +71,6 @@ export class OAuthProxyElement
     return name ?? `${props.path} → ${props.targetUrl}`;
   }
   apiRole() {
-    return "provider" as const;
+    return 'provider' as const;
   }
 }

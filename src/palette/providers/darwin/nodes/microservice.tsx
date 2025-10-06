@@ -5,6 +5,7 @@ import { CheckPending } from '../contextuals/CheckPending';
 import { Merge } from '../contextuals/Merge';
 import { Deploy } from '../contextuals/Deploy';
 import { DeployConfig } from '../contextuals/DeployConfig';
+import { DialogRender } from '../../../../dialog/DialogRender';
 
 export type MicroserviceProps = {
   tech: 'quarkus' | 'spring' | 'php-slim' | 'node';
@@ -15,6 +16,20 @@ export class MicroserviceElement implements DiagramElementType<MicroserviceProps
   kind: ElementKind = 'microservice';
   title = 'Microservicio';
   paletteIcon = (<Cog size={18} />);
+  
+  constructor(public readonly render: DialogRender) {
+  }
+
+  async open(props: MicroserviceProps, node: DiagramNode): Promise<void> {
+    await this.render.showEdit({
+      id: node.id,
+      value: props,
+      title: node.name || node.id,
+      errors: node.errors,
+      warns: node.warns,
+      definition: this.definition(),
+    });
+  }
 
   definition() {
     return {

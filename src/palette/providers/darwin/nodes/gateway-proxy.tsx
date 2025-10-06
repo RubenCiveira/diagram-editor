@@ -1,6 +1,7 @@
 import { Waypoints } from 'lucide-react';
-import { ElementKind } from '../../../../diagram';
+import { DiagramNode, ElementKind } from '../../../../diagram';
 import { DiagramElementType } from '../../../DiagramElementType';
+import { DialogRender } from '../../../../dialog/DialogRender';
 
 export type GatewayProxyProps = {
   path: string;
@@ -15,6 +16,21 @@ export class GatewayProxyElement implements DiagramElementType<GatewayProxyProps
   title = 'Gateway Proxy';
   paletteIcon = (<Waypoints size={18} />);
 
+    
+    constructor(public readonly render: DialogRender) {
+    }
+  
+    async open(props: GatewayProxyProps, node: DiagramNode): Promise<void> {
+      await this.render.showEdit({
+        id: node.id,
+        value: props,
+        title: node.name || node.id,
+        errors: node.errors,
+        warns: node.warns,
+        definition: this.definition(),
+      });
+    }
+  
   definition() {
     return {
       schema: {

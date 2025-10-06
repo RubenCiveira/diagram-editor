@@ -3,6 +3,7 @@ import { StickyNote, Palette, FilePlus2, Eraser } from 'lucide-react';
 import type { DiagramElementType, NodeActionItem } from '../../../DiagramElementType';
 import { DiagramModel, DiagramNode } from '../../../../diagram';
 import { ReactNode } from 'react';
+import { DialogRender } from '../../../../dialog/DialogRender';
 
 export type NoteProps = {
   text: string;
@@ -23,6 +24,19 @@ export class NoteElement implements DiagramElementType<NoteProps> {
   title = 'Nota';
   paletteIcon = (<StickyNote size={18} />);
 
+  constructor(public readonly render: DialogRender) {}
+
+  async open(props: NoteProps, node: DiagramNode): Promise<void> {
+    await this.render.showEdit({
+      id: node.id,
+      value: props,
+      title: node.name || node.id,
+      errors: node.errors,
+      warns: node.warns,
+      definition: this.definition(),
+    });
+  }
+
   definition() {
     return {
       schema: {
@@ -41,7 +55,6 @@ export class NoteElement implements DiagramElementType<NoteProps> {
       },
     };
   }
-
 
   defaultProps(): NoteProps {
     return {
@@ -83,7 +96,7 @@ export class NoteElement implements DiagramElementType<NoteProps> {
     return { width: 220, height: 140 };
   }
 
-  renderShape? ( props: NoteProps, content: ReactNode ): ReactNode {
+  renderShape?(props: NoteProps, content: ReactNode): ReactNode {
     const palette = COLORS[props.color ?? 'yellow'];
     return (
       <div
@@ -153,7 +166,9 @@ export class NoteElement implements DiagramElementType<NoteProps> {
         icon: <Eraser size={16} />,
         label: 'Vaciar contenido',
         danger: false,
-        onClick: () => { props.text = ''; },
+        onClick: () => {
+          props.text = '';
+        },
       },
     ];
   }

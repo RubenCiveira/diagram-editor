@@ -1,6 +1,7 @@
 import { ExternalLink } from 'lucide-react';
-import { ElementKind } from '../../../../diagram';
+import { DiagramNode, ElementKind } from '../../../../diagram';
 import { DiagramElementType } from '../../../DiagramElementType';
+import { DialogRender } from '../../../../dialog/DialogRender';
 
 export type ExternalSoapProps = {
   serviceType: 'db' | 'microservice' | 'elk' | 'trx' | 'oauth' | 'queue' | 'cache' | 'storage';
@@ -13,6 +14,21 @@ export class ExternalSoapElement implements DiagramElementType<ExternalSoapProps
   kind: ElementKind = 'externalSoap';
   title = 'Web service';
   paletteIcon = (<ExternalLink size={18} />);
+
+  
+  constructor(public readonly render: DialogRender) {
+  }
+
+  async open(props: ExternalSoapProps, node: DiagramNode): Promise<void> {
+    await this.render.showEdit({
+      id: node.id,
+      value: props,
+      title: node.name || node.id,
+      errors: node.errors,
+      warns: node.warns,
+      definition: this.definition(),
+    });
+  }
 
   definition() {
     return {
