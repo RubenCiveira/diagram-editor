@@ -1,0 +1,103 @@
+/* ------------------------------ Palette Drawer ----------------------------- */
+.palette-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.3);
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+  z-index: 60;
+  opacity: 0;
+  animation: paletteBackFadeIn var(--anim-backdrop) ease-out forwards;
+  will-change: opacity;
+}
+
+.palette-drawer {
+  width: min(320px, 86vw);
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  padding: 12px;
+  overflow: auto;
+  transform: translateX(-16px);
+  opacity: 0;
+  animation: paletteDrawerSlideIn var(--anim-drawer) cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes paletteBackFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes paletteDrawerSlideIn {
+  0% {
+    transform: translateX(-16px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .palette-backdrop,
+  .palette-drawer {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+.palette-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+
+  h3 {
+    margin: 0;
+    font-size: 14px;
+  }
+}
+
+.icon-btn {
+  padding: 6px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.palette-list {
+  display: grid;
+  gap: 8px;
+}
+
+.palette-item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+  .palette-icon {
+    display: inline-flex;
+    width: 22px;
+    justify-content: center;
+  }
+  .palette-title {
+    font-size: 14px;
+  }
+  &:hover {
+    background: #f8fafc;
+  }
+}

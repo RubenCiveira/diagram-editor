@@ -1,0 +1,169 @@
+/* --------------------------- Editor contenedor ----------------------------- */
+.diagram-container {
+  position: relative;
+  height: calc(100vh - var(--topbar-h, 0px));
+  width: 100%;
+  background: #fff;
+
+  .react-flow {
+    height: 100%;
+  }
+}
+
+/* ------------------------ Safe area para React Flow ------------------------- */
+.react-flow__minimap {
+  bottom: calc(var(--safe-bottom) + 64px) !important;
+  right: var(--safe-right) !important;
+  border: 1px solid #e5e7eb;
+  background: #ffffffcc;
+  backdrop-filter: blur(2px);
+  border-radius: 8px;
+}
+
+/* Panel de Controls compacto */
+.react-flow__panel.react-flow__controls {
+  left: auto !important;
+  right: var(--safe-right) !important;
+  bottom: var(--safe-bottom) !important;
+  width: auto !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+.react-flow__controls > button {
+  margin: 0 2px;
+}
+
+/* ========================= CAPAS (z-index y eventos) ======================= */
+.react-flow__edges {
+  z-index: 5 !important;
+  pointer-events: none !important; /* la capa no capta eventos */
+}
+.react-flow__nodes {
+  z-index: 3 !important;
+}
+
+/* Solo el hit-path de cada edge capta eventos */
+.react-flow__edge-interaction {
+  pointer-events: stroke !important;
+}
+
+/* Nodos de fondo (notas) por debajo siempre */
+.react-flow__node {
+  z-index: 3;
+}
+.react-flow__node.c4-node--bg {
+  z-index: 0 !important;
+}
+.react-flow__node.c4-node--bg.selected,
+.react-flow__node.c4-node--bg.dragging {
+  z-index: 0 !important;
+}
+.react-flow__node.c4-node--bg .react-flow__resize-control {
+  z-index: 2;
+}
+
+/* ------------------------- Botones flotantes (+ / export) ------------------ */
+.rf-floating-add,
+.rf-floating-export {
+  position: absolute;
+  top: 10px;
+  z-index: 6;
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  border: 2px solid rgb(126, 129, 134);
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.rf-floating-add {
+  left: 10px;
+}
+.rf-floating-export {
+  right: 10px;
+}
+
+/* ================================ SELECCIÓN ================================ */
+/* Edges seleccionados: trazo más grueso y oscuro */
+.react-flow__edge-path,
+.react-flow__connection-path {
+  stroke: rgb(126, 129, 134) !important;
+  stroke-width: 3.5 !important;
+}
+
+.react-flow__edge.selected .react-flow__edge-path,
+.react-flow__edge.selected .react-flow__connection-path {
+  stroke: #111827 !important;
+  stroke-width: 3.5 !important;
+}
+
+.selected .shape {
+  box-shadow: rgba(41, 65, 112, 0.1) 0px 0px 0px 8px !important;
+}
+
+.shape {
+  border: solid rgb(126, 129, 134) 3px !important;
+}
+
+.react-flow__handle-left {
+  width: 8px !important;
+  height: 18px !important;
+  border: 2px solid rgb(126, 129, 134) !important;
+  background-color: rgb(126, 129, 134) !important;
+}
+
+.react-flow__handle-right {
+  right: -12px !important;
+  width: 12px !important;
+  height: 12px !important;
+  border: 2px solid rgb(126, 129, 134) !important;
+  background-color: rgb(126, 129, 134) !important;
+}
+
+.react-flow__handle-bottom {
+  width: 12px !important;
+  height: 12px !important;
+  border: 2px solid rgb(126, 129, 134) !important;
+  background-color: rgb(126, 129, 134) !important;
+}
+
+.react-flow__handle-top {
+  width: 18px !important;
+  height: 8px !important;
+  border: 2px solid rgb(126, 129, 134) !important;
+  background-color: rgb(126, 129, 134) !important;
+}
+
+.react-flow__handle-top:hover,
+.react-flow__handle-bottom:hover,
+.react-flow__handle-left:hover,
+.react-flow__handle-top:hover {
+  border: 2px solid red !important;
+}
+
+.react-flow__controls-button {
+  border: 2px solid rgb(126, 129, 134);
+}
+
+.rf-floating-add:hover,
+.rf-floating-export:hover {
+  border: 2px solid red;
+  background-color: pink;
+}
+
+.react-flow__controls-button:hover {
+  border: 2px solid red;
+  background-color: pink;
+}
+
+.hidden-handler {
+  background-color: transparent !important;
+  border: none !important;
+  width: 40px !important;
+  height: 40px !important;
+}

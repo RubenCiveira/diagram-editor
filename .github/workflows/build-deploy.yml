@@ -1,0 +1,59 @@
+name: Build and Deploy
+# With angular
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write  # necesario para push a gh-pages
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install
+        run: npm ci
+
+      # ⬇️ Ajusta el base-href (ver punto 1)
+      - name: Build
+        run: |
+          npm run build
+          #  npx ng build --configuration production --base-href /netconfighub-ui/
+
+      # ⚠️ Carpeta de salida según tu versión de Angular/CLI
+      - name: Detect dist folder
+        id: dist
+        run: |
+          echo "path=dist/" >> $GITHUB_OUTPUT
+
+      # SPA fallback (opcional pero recomendado para routing)
+      - name: Add SPA fallback
+        run: |
+          cp ${{
+            steps.dist.outputs.path
+          }}/index.html ${{
+            steps.dist.outputs.path
+          }}/404.html
+
+      # Evita Jekyll
+      - name: Add .nojekyll
+        run: |
+          touch ${{
+            steps.dist.outputs.path
+          }}/.nojekyll
+
+      - name: Deploy to gh-pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: ${{ steps.dist.outputs.path }}

@@ -1,0 +1,100 @@
+/* src/styles/action-palette.scss */
+
+/* Abre el backdrop pegando el cajón a la derecha */
+.palette-backdrop--right {
+  justify-content: flex-end; /* derecha */
+  align-items: stretch;
+}
+
+/* Cajón entrando desde la derecha (mismo look & feel que la paleta izquierda) */
+.palette-drawer--right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: min(320px, 86vw);
+  border-left: 1px solid #e5e7eb;
+  border-right: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  background: #ffffff;
+  padding: 12px;
+  overflow: auto;
+
+  /* Animación simétrica a la izquierda pero entrando desde la derecha */
+  transform: translateX(16px);
+  opacity: 0;
+  animation: paletteDrawerSlideInRight var(--anim-drawer, 220ms) cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  will-change: transform, opacity;
+}
+
+/* Animación de entrada desde la derecha */
+@keyframes paletteDrawerSlideInRight {
+  0% {
+    transform: translateX(16px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Respeta “reduced motion” */
+@media (prefers-reduced-motion: reduce) {
+  .palette-drawer--right {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* Reutiliza estilos base ya existentes (cabecera, lista, item, botón icono) */
+.palette-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+
+  h3 {
+    margin: 0;
+    font-size: 14px;
+  }
+}
+
+.icon-btn {
+  padding: 6px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.palette-list {
+  display: grid;
+  gap: 8px;
+}
+
+.palette-item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+
+  .palette-icon {
+    display: inline-flex;
+    width: 22px;
+    justify-content: center;
+  }
+  .palette-title {
+    font-size: 14px;
+  }
+  &:hover {
+    background: #f8fafc;
+  }
+}

@@ -1,0 +1,1243 @@
+{
+  "version": "1.0",
+  "createdAt": "2025-09-19T06:13:41.986Z",
+  "updatedAt": "2025-09-19T06:13:41.986Z",
+  "nodes": [
+    {
+      "id": "i5ihth8f",
+      "kind": "darwin-user",
+      "name": "Usuario i5ih",
+      "props": {
+        "category": "Cliente"
+      },
+      "position": {
+        "x": -49.91949167111924,
+        "y": -76.7841709909088
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "41nyg2ob",
+      "kind": "shellUi",
+      "name": "Shell UI 41ny",
+      "props": {
+        "routeBase": "/app",
+        "authRequired": true
+      },
+      "position": {
+        "x": 126.08050832888077,
+        "y": -76.7841709909088
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "837s0ffs",
+      "kind": "microFront",
+      "name": "Cards",
+      "props": {
+        "route": "/info",
+        "remoteEntryUrl": "https://cdn/app/remoteEntry.js",
+        "exposedModule": "./InfoModule",
+        "version": "1.0.0",
+        "dependsOn": []
+      },
+      "position": {
+        "x": 629.4476358171797,
+        "y": 1355.5144733775664
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "z8ls5lnv",
+      "kind": "microFront",
+      "name": "Chips",
+      "props": {
+        "route": "/info",
+        "remoteEntryUrl": "https://cdn/app/remoteEntry.js",
+        "exposedModule": "./InfoModule",
+        "version": "1.0.0",
+        "dependsOn": []
+      },
+      "position": {
+        "x": 565.6253362637423,
+        "y": 464.31928214317077
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "eaw198dh",
+      "kind": "microFront",
+      "name": "Financial advisor",
+      "props": {
+        "route": "/info",
+        "remoteEntryUrl": "https://cdn/app/remoteEntry.js",
+        "exposedModule": "./InfoModule",
+        "version": "1.0.0",
+        "dependsOn": []
+      },
+      "position": {
+        "x": 622.7960714187291,
+        "y": 873.8917780493234
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "67yqskks",
+      "kind": "microFront",
+      "name": "Posicion global",
+      "props": {
+        "route": "/info",
+        "remoteEntryUrl": "https://cdn/app/remoteEntry.js",
+        "exposedModule": "./InfoModule",
+        "version": "1.0.0",
+        "dependsOn": []
+      },
+      "position": {
+        "x": 625.1952594869547,
+        "y": 1128.1342187647585
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "71b4aj4n",
+      "kind": "gateway",
+      "name": "Gateway",
+      "props": {
+        "namePattern": "gw-*",
+        "entryHost": "gateway.example.com",
+        "entryPath": "/",
+        "rateLimit": 0
+      },
+      "position": {
+        "x": 920.336383953862,
+        "y": -718.8720867951569
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "8h5cpoxr",
+      "kind": "remoteOAuth",
+      "name": "OAuth 8h5c",
+      "props": {
+        "path": "/api",
+        "targetUrl": "http://svc:8080/",
+        "rewrite": "^/api -> /",
+        "cors": true,
+        "cacheTtl": 0
+      },
+      "position": {
+        "x": 579.696384060089,
+        "y": -739.3181888630571
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "t7ha4fs5",
+      "kind": "api",
+      "name": "Api de tarjetas",
+      "props": {
+        "protocol": "https",
+        "basePath": "/api",
+        "version": "v1",
+        "auth": "oauth"
+      },
+      "position": {
+        "x": 865.4583200417227,
+        "y": 1358.41653471144
+      },
+      "width": 80,
+      "height": 80
+    },
+    {
+      "id": "or6syvxa",
+      "kind": "api",
+      "name": "Api Posicion global",
+      "props": {
+        "protocol": "https",
+        "basePath": "/api",
+        "version": "v1",
+        "auth": "oauth"
+      },
+      "position": {
+        "x": 787.6689574824857,
+        "y": 1135.464363976338
+      },
+      "width": 80,
+      "height": 80
+    },
+    {
+      "id": "z0zgelb0",
+      "kind": "api",
+      "name": "API Chips",
+      "props": {
+        "protocol": "https",
+        "basePath": "/api",
+        "version": "v1",
+        "auth": "oauth"
+      },
+      "position": {
+        "x": 738.1254241050696,
+        "y": 471.7897163396748
+      },
+      "width": 80,
+      "height": 80
+    },
+    {
+      "id": "byh5lzix",
+      "kind": "api",
+      "name": "API Financial Advisor",
+      "props": {
+        "protocol": "https",
+        "basePath": "/api",
+        "version": "v1",
+        "auth": "oauth"
+      },
+      "position": {
+        "x": 992.7989179174627,
+        "y": 780.6580100056693
+      },
+      "width": 80,
+      "height": 80
+    },
+    {
+      "id": "jegsi35i",
+      "kind": "api",
+      "name": "API shell",
+      "props": {
+        "protocol": "https",
+        "basePath": "/api",
+        "version": "v1",
+        "auth": "oauth"
+      },
+      "position": {
+        "x": 1019.8583636843466,
+        "y": -62.62541463399313
+      },
+      "width": 80,
+      "height": 80
+    },
+    {
+      "id": "bn8r9vqx",
+      "kind": "microservice",
+      "name": "financial-advisor-es-back",
+      "props": {
+        "tech": "quarkus",
+        "baseUrl": "https://api.example.com/service"
+      },
+      "position": {
+        "x": 1210.896584559004,
+        "y": 883.1691594582127
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "tcrgjhx4",
+      "kind": "microservice",
+      "name": "Chips-es-back",
+      "props": {
+        "tech": "quarkus",
+        "baseUrl": "https://api.example.com/service"
+      },
+      "position": {
+        "x": 1168.1254241050697,
+        "y": 467.7897163396748
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "b18tqskv",
+      "kind": "microservice",
+      "name": "Shell-eu-api",
+      "props": {
+        "tech": "spring",
+        "baseUrl": "https://api.example.com/service"
+      },
+      "position": {
+        "x": 1285.8583636843466,
+        "y": -74.62541463399313
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "bb3ljkld",
+      "kind": "microservice",
+      "name": "accounts-es-api",
+      "props": {
+        "tech": "quarkus",
+        "baseUrl": "https://api.example.com/service"
+      },
+      "position": {
+        "x": 1196.0593758565901,
+        "y": 1346.434769956833
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "45p7u4xc",
+      "kind": "microservice",
+      "name": "Cuspro-es-back",
+      "props": {
+        "tech": "quarkus",
+        "baseUrl": "https://api.example.com/service"
+      },
+      "position": {
+        "x": 1965.0591191033118,
+        "y": -350.0466385496699
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "0sa48oqp",
+      "kind": "database",
+      "name": "PostgreSql-One web",
+      "props": {
+        "tech": "quarkus",
+        "baseUrl": "https://api.example.com/service"
+      },
+      "position": {
+        "x": 2364.1387897547693,
+        "y": -685.288835549975
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "5oufhj4m",
+      "kind": "api",
+      "name": "API Cuspro",
+      "props": {
+        "protocol": "https",
+        "basePath": "/api",
+        "version": "v1",
+        "auth": "oauth"
+      },
+      "position": {
+        "x": 1749.1977400102467,
+        "y": -330.59898843130657
+      },
+      "width": 80,
+      "height": 80
+    },
+    {
+      "id": "gh0xqo9p",
+      "kind": "microservice",
+      "name": "WebPG-es-back",
+      "props": {
+        "tech": "quarkus",
+        "baseUrl": "https://api.example.com/service"
+      },
+      "position": {
+        "x": 1184.057734408837,
+        "y": 1125.677867389241
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "kc6o2b5i",
+      "kind": "database",
+      "name": "Gravity-ORA-DB2",
+      "props": {
+        "tech": "quarkus",
+        "baseUrl": "https://api.example.com/service"
+      },
+      "position": {
+        "x": 2689.50551465163,
+        "y": -670.2416395957532
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "pnkroaie",
+      "kind": "api",
+      "name": "API Customers",
+      "props": {
+        "protocol": "https",
+        "basePath": "/api",
+        "version": "v1",
+        "auth": "oauth"
+      },
+      "position": {
+        "x": 991.9717693456083,
+        "y": 990.034436367985
+      },
+      "width": 80,
+      "height": 80
+    },
+    {
+      "id": "1fxfvzej",
+      "kind": "microFront",
+      "name": "Accounts",
+      "props": {
+        "route": "/info",
+        "remoteEntryUrl": "https://cdn/app/remoteEntry.js",
+        "exposedModule": "./InfoModule",
+        "version": "1.0.0",
+        "dependsOn": []
+      },
+      "position": {
+        "x": 638.5938427777064,
+        "y": 1550.679050021758
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "lebcelng",
+      "kind": "api",
+      "name": "Api de cuentas",
+      "props": {
+        "protocol": "https",
+        "basePath": "/api",
+        "version": "v1",
+        "auth": "oauth"
+      },
+      "position": {
+        "x": 873.1954344025127,
+        "y": 1556.8476386138427
+      },
+      "width": 80,
+      "height": 80
+    },
+    {
+      "id": "5fb05bcz",
+      "kind": "microservice",
+      "name": "Cards-es-api",
+      "props": {
+        "tech": "quarkus",
+        "baseUrl": "https://api.example.com/service"
+      },
+      "position": {
+        "x": 1222.33224424637,
+        "y": 1543.5388915872352
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "1w1dryal",
+      "kind": "microFront",
+      "name": "Login",
+      "props": {
+        "route": "/info",
+        "remoteEntryUrl": "https://cdn/app/remoteEntry.js",
+        "exposedModule": "./InfoModule",
+        "version": "1.0.0",
+        "dependsOn": []
+      },
+      "position": {
+        "x": 498.0831719445605,
+        "y": 200.57922650189485
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "l5kkw3wx",
+      "kind": "api",
+      "name": "API Login",
+      "props": {
+        "protocol": "https",
+        "basePath": "/api",
+        "version": "v1",
+        "auth": "oauth"
+      },
+      "position": {
+        "x": 682.3943083644633,
+        "y": 208.1398620720518
+      },
+      "width": 80,
+      "height": 80
+    },
+    {
+      "id": "12ln25mb",
+      "kind": "microservice",
+      "name": "Login-es-back",
+      "props": {
+        "tech": "quarkus",
+        "baseUrl": "https://api.example.com/service"
+      },
+      "position": {
+        "x": 1201.6688495569317,
+        "y": 211.9746572178403
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "y9dtlfn7",
+      "kind": "externalService",
+      "name": "UDS",
+      "props": {
+        "serviceType": "db",
+        "name": "PostgreSQL",
+        "endpoint": "postgres://host:5432/db"
+      },
+      "position": {
+        "x": 2360.54062511363,
+        "y": 66.22108009741555
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "q3sfmfw4",
+      "kind": "externalService",
+      "name": "Private bank",
+      "props": {
+        "serviceType": "db",
+        "name": "PostgreSQL",
+        "endpoint": "postgres://host:5432/db"
+      },
+      "position": {
+        "x": 2799.5169892134713,
+        "y": -189.60572389703563
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "sn6ttczr",
+      "kind": "externalSoap",
+      "name": "User profile",
+      "props": {
+        "serviceType": "db",
+        "name": "PostgreSQL",
+        "endpoint": "postgres://host:5432/db"
+      },
+      "position": {
+        "x": 2757.5072322132387,
+        "y": -61.84093359231798
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "sm4xxqi3",
+      "kind": "externalSoap",
+      "name": "BDP",
+      "props": {
+        "serviceType": "db",
+        "name": "PostgreSQL",
+        "endpoint": "postgres://host:5432/db"
+      },
+      "position": {
+        "x": 2833.285735359883,
+        "y": 272.6866653604974
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "de3w4mpb",
+      "kind": "externalSoap",
+      "name": "Comercial segment",
+      "props": {
+        "serviceType": "db",
+        "name": "PostgreSQL",
+        "endpoint": "postgres://host:5432/db"
+      },
+      "position": {
+        "x": 2770.308918317226,
+        "y": 64.02816561729765
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "ghl1maa4",
+      "kind": "externalService",
+      "name": "Fraud",
+      "props": {
+        "serviceType": "db",
+        "name": "PostgreSQL",
+        "endpoint": "postgres://host:5432/db"
+      },
+      "position": {
+        "x": 2257.7483186892628,
+        "y": 232.01402255663527
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "l3e7mzhn",
+      "kind": "externalService",
+      "name": "SCA",
+      "props": {
+        "serviceType": "db",
+        "name": "PostgreSQL",
+        "endpoint": "postgres://host:5432/db"
+      },
+      "position": {
+        "x": 2139.592980355587,
+        "y": 323.21236617663885
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "awsw8wg4",
+      "kind": "externalTransaction",
+      "name": "Transaction K7C0",
+      "props": {
+        "serviceType": "db",
+        "name": "PostgreSQL",
+        "endpoint": "postgres://host:5432/db"
+      },
+      "position": {
+        "x": 2122.7511555862857,
+        "y": 594.5093800509275
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "ovefv1ut",
+      "kind": "externalTransaction",
+      "name": "Transactional EUPA",
+      "props": {
+        "serviceType": "db",
+        "name": "PostgreSQL",
+        "endpoint": "postgres://host:5432/db"
+      },
+      "position": {
+        "x": 2120.1978226581205,
+        "y": 440.181573536959
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "c7aldgdx",
+      "kind": "externalService",
+      "name": "NHB",
+      "props": {
+        "serviceType": "db",
+        "name": "PostgreSQL",
+        "endpoint": "postgres://host:5432/db"
+      },
+      "position": {
+        "x": 1711.8371533329546,
+        "y": 1395.6220058900344
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "i7jnwjp7",
+      "kind": "externalService",
+      "name": "next-buills",
+      "props": {
+        "serviceType": "db",
+        "name": "PostgreSQL",
+        "endpoint": "postgres://host:5432/db"
+      },
+      "position": {
+        "x": 2228.7271344203364,
+        "y": 1069.0645961978717
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "o93dpgrp",
+      "kind": "externalService",
+      "name": "statements-status",
+      "props": {
+        "serviceType": "db",
+        "name": "PostgreSQL",
+        "endpoint": "postgres://host:5432/db"
+      },
+      "position": {
+        "x": 2355.305383784326,
+        "y": 973.5861117270435
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "vc2mmdx6",
+      "kind": "externalService",
+      "name": "card-contracts",
+      "props": {
+        "serviceType": "db",
+        "name": "PostgreSQL",
+        "endpoint": "postgres://host:5432/db"
+      },
+      "position": {
+        "x": 2213.422210852937,
+        "y": 858.0406566658384
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "9dllovsp",
+      "kind": "externalSoap",
+      "name": "overdrawn",
+      "props": {
+        "serviceType": "db",
+        "name": "PostgreSQL",
+        "endpoint": "postgres://host:5432/db"
+      },
+      "position": {
+        "x": 2385.4131965545457,
+        "y": 715.9416302019027
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "guzk6kvc",
+      "kind": "externalService",
+      "name": "pfm-aagregations",
+      "props": {
+        "serviceType": "db",
+        "name": "PostgreSQL",
+        "endpoint": "postgres://host:5432/db"
+      },
+      "position": {
+        "x": 2333.2936562770337,
+        "y": 1193.1296837678665
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "r9n4eisu",
+      "kind": "externalSoap",
+      "name": "pfm-budget",
+      "props": {
+        "serviceType": "db",
+        "name": "PostgreSQL",
+        "endpoint": "postgres://host:5432/db"
+      },
+      "position": {
+        "x": 2174.908923884893,
+        "y": 1323.3733941790713
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "jjce46v1",
+      "kind": "externalSoap",
+      "name": "cmc-sign",
+      "props": {
+        "serviceType": "db",
+        "name": "PostgreSQL",
+        "endpoint": "postgres://host:5432/db"
+      },
+      "position": {
+        "x": 2561.5880010115475,
+        "y": 822.8134678113513
+      },
+      "width": 96,
+      "height": 96
+    },
+    {
+      "id": "pim7dba1",
+      "kind": "note",
+      "name": "Nota pim7",
+      "props": {
+        "text": "## Nueva nota\n\nPuedes escribir *Markdown* aquí.",
+        "color": "yellow"
+      },
+      "position": {
+        "x": 2062.591566978076,
+        "y": -196.93778496043146
+      },
+      "width": 970,
+      "height": 1645
+    }
+  ],
+  "edges": [
+    {
+      "id": "reactflow__edge-i5ihth8f-41nyg2ob",
+      "source": "i5ihth8f",
+      "target": "41nyg2ob",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-41nyg2ob-837s0ffs",
+      "source": "41nyg2ob",
+      "target": "837s0ffs",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-41nyg2obout-67yqskksin",
+      "source": "41nyg2ob",
+      "target": "67yqskks",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-41nyg2obout-z8ls5lnvin",
+      "source": "41nyg2ob",
+      "target": "z8ls5lnv",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-41nyg2obout-eaw198dhin",
+      "source": "41nyg2ob",
+      "target": "eaw198dh",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-41nyg2obout-8h5cpoxrin",
+      "source": "41nyg2ob",
+      "target": "8h5cpoxr",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-837s0ffsout-new-t7ha4fs5in",
+      "source": "837s0ffs",
+      "target": "t7ha4fs5",
+      "sourceHandle": "out-new",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-67yqskks-or6syvxa",
+      "source": "67yqskks",
+      "target": "or6syvxa",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-z8ls5lnv-z0zgelb0",
+      "source": "z8ls5lnv",
+      "target": "z0zgelb0",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-eaw198dh-byh5lzix",
+      "source": "eaw198dh",
+      "target": "byh5lzix",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-41nyg2obout-jegsi35iin",
+      "source": "41nyg2ob",
+      "target": "jegsi35i",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-71b4aj4nchildren-t7ha4fs5parent",
+      "source": "71b4aj4n",
+      "target": "t7ha4fs5",
+      "sourceHandle": "children",
+      "targetHandle": "parent",
+      "kind": "parentChild"
+    },
+    {
+      "id": "reactflow__edge-71b4aj4nchildren-or6syvxaparent",
+      "source": "71b4aj4n",
+      "target": "or6syvxa",
+      "sourceHandle": "children",
+      "targetHandle": "parent",
+      "kind": "parentChild"
+    },
+    {
+      "id": "reactflow__edge-71b4aj4nchildren-jegsi35iparent",
+      "source": "71b4aj4n",
+      "target": "jegsi35i",
+      "sourceHandle": "children",
+      "targetHandle": "parent",
+      "kind": "parentChild"
+    },
+    {
+      "id": "reactflow__edge-71b4aj4nchildren-z0zgelb0parent",
+      "source": "71b4aj4n",
+      "target": "z0zgelb0",
+      "sourceHandle": "children",
+      "targetHandle": "parent",
+      "kind": "parentChild"
+    },
+    {
+      "id": "reactflow__edge-71b4aj4nchildren-byh5lzixparent",
+      "source": "71b4aj4n",
+      "target": "byh5lzix",
+      "sourceHandle": "children",
+      "targetHandle": "parent",
+      "kind": "parentChild"
+    },
+    {
+      "id": "reactflow__edge-byh5lzix-bn8r9vqx",
+      "source": "byh5lzix",
+      "target": "bn8r9vqx",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-z0zgelb0-tcrgjhx4",
+      "source": "z0zgelb0",
+      "target": "tcrgjhx4",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-jegsi35i-b18tqskv",
+      "source": "jegsi35i",
+      "target": "b18tqskv",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-41nyg2obout-5oufhj4min",
+      "source": "41nyg2ob",
+      "target": "5oufhj4m",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-71b4aj4nchildren-5oufhj4mparent",
+      "source": "71b4aj4n",
+      "target": "5oufhj4m",
+      "sourceHandle": "children",
+      "targetHandle": "parent",
+      "kind": "parentChild"
+    },
+    {
+      "id": "reactflow__edge-b18tqskvout-new-5oufhj4min",
+      "source": "b18tqskv",
+      "target": "5oufhj4m",
+      "sourceHandle": "out-new",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-5oufhj4mout-new-45p7u4xcin",
+      "source": "5oufhj4m",
+      "target": "45p7u4xc",
+      "sourceHandle": "out-new",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-t7ha4fs5out-new-bb3ljkldin",
+      "source": "t7ha4fs5",
+      "target": "bb3ljkld",
+      "sourceHandle": "out-new",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-or6syvxaout-new-gh0xqo9pin",
+      "source": "or6syvxa",
+      "target": "gh0xqo9p",
+      "sourceHandle": "out-new",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-45p7u4xcout-0sa48oqpin",
+      "source": "45p7u4xc",
+      "target": "0sa48oqp",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-b18tqskvout-0sa48oqpin",
+      "source": "b18tqskv",
+      "target": "0sa48oqp",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-45p7u4xcout-kc6o2b5iin",
+      "source": "45p7u4xc",
+      "target": "kc6o2b5i",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-gh0xqo9pout-new-5oufhj4min",
+      "source": "gh0xqo9p",
+      "target": "5oufhj4m",
+      "sourceHandle": "out-new",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-tcrgjhx4out-new-5oufhj4min",
+      "source": "tcrgjhx4",
+      "target": "5oufhj4m",
+      "sourceHandle": "out-new",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-bn8r9vqxout-new-5oufhj4min",
+      "source": "bn8r9vqx",
+      "target": "5oufhj4m",
+      "sourceHandle": "out-new",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-eaw198dhout-pnkroaiein",
+      "source": "eaw198dh",
+      "target": "pnkroaie",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-pnkroaieout-new-bn8r9vqxin",
+      "source": "pnkroaie",
+      "target": "bn8r9vqx",
+      "sourceHandle": "out-new",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-41nyg2obout-1fxfvzejin",
+      "source": "41nyg2ob",
+      "target": "1fxfvzej",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-1fxfvzej-lebcelng",
+      "source": "1fxfvzej",
+      "target": "lebcelng",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-lebcelng-5fb05bcz",
+      "source": "lebcelng",
+      "target": "5fb05bcz",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-1w1dryal-l5kkw3wx",
+      "source": "1w1dryal",
+      "target": "l5kkw3wx",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-l5kkw3wx-12ln25mb",
+      "source": "l5kkw3wx",
+      "target": "12ln25mb",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-41nyg2obout-1w1dryalin",
+      "source": "41nyg2ob",
+      "target": "1w1dryal",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-71b4aj4nchildren-l5kkw3wxparent",
+      "source": "71b4aj4n",
+      "target": "l5kkw3wx",
+      "sourceHandle": "children",
+      "targetHandle": "parent",
+      "kind": "parentChild"
+    },
+    {
+      "id": "reactflow__edge-12ln25mbout-new-0sa48oqpin",
+      "source": "12ln25mb",
+      "target": "0sa48oqp",
+      "sourceHandle": "out-new",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-45p7u4xcout-y9dtlfn7in",
+      "source": "45p7u4xc",
+      "target": "y9dtlfn7",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-45p7u4xcout-q3sfmfw4in",
+      "source": "45p7u4xc",
+      "target": "q3sfmfw4",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-45p7u4xcout-sn6ttczrin",
+      "source": "45p7u4xc",
+      "target": "sn6ttczr",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-45p7u4xcout-sm4xxqi3in",
+      "source": "45p7u4xc",
+      "target": "sm4xxqi3",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-45p7u4xcout-de3w4mpbin",
+      "source": "45p7u4xc",
+      "target": "de3w4mpb",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-12ln25mbout-ghl1maa4in",
+      "source": "12ln25mb",
+      "target": "ghl1maa4",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-12ln25mbout-l3e7mzhnin",
+      "source": "12ln25mb",
+      "target": "l3e7mzhn",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-12ln25mbout-y9dtlfn7in",
+      "source": "12ln25mb",
+      "target": "y9dtlfn7",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-12ln25mbout-awsw8wg4in",
+      "source": "12ln25mb",
+      "target": "awsw8wg4",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-12ln25mbout-ovefv1utin",
+      "source": "12ln25mb",
+      "target": "ovefv1ut",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-gh0xqo9pout-c7aldgdxin",
+      "source": "gh0xqo9p",
+      "target": "c7aldgdx",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-bb3ljkldout-new-c7aldgdxin",
+      "source": "bb3ljkld",
+      "target": "c7aldgdx",
+      "sourceHandle": "out-new",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-5fb05bczout-new-c7aldgdxin",
+      "source": "5fb05bcz",
+      "target": "c7aldgdx",
+      "sourceHandle": "out-new",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-tcrgjhx4out-y9dtlfn7in",
+      "source": "tcrgjhx4",
+      "target": "y9dtlfn7",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-tcrgjhx4out-9dllovspin",
+      "source": "tcrgjhx4",
+      "target": "9dllovsp",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-tcrgjhx4out-vc2mmdx6in",
+      "source": "tcrgjhx4",
+      "target": "vc2mmdx6",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-tcrgjhx4out-o93dpgrpin",
+      "source": "tcrgjhx4",
+      "target": "o93dpgrp",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-tcrgjhx4out-i7jnwjp7in",
+      "source": "tcrgjhx4",
+      "target": "i7jnwjp7",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-tcrgjhx4out-jjce46v1in",
+      "source": "tcrgjhx4",
+      "target": "jjce46v1",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-tcrgjhx4out-guzk6kvcin",
+      "source": "tcrgjhx4",
+      "target": "guzk6kvc",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    },
+    {
+      "id": "reactflow__edge-tcrgjhx4out-r9n4eisuin",
+      "source": "tcrgjhx4",
+      "target": "r9n4eisu",
+      "sourceHandle": "out",
+      "targetHandle": "in",
+      "kind": "lateral"
+    }
+  ]
+}

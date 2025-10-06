@@ -1,0 +1,33 @@
+/* --------------------------- Top Toolbar ----------------------------------- */
+.top-toolbar {
+  display: flex;
+  flex-wrap: nowrap; /* ✅ una sola línea */
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 40; /* debajo del modal (50) y overlay (100) */
+  white-space: nowrap;
+  overflow-x: auto; /* scroll horizontal si no cabe */
+}
+
+.top-toolbar .spacer {
+  width: 1px;
+  height: 24px;
+  background: #e5e7eb;
+  margin: 0 6px;
+}
+.top-toolbar label {
+  font-size: 13px;
+  color: #475569;
+}
+.top-toolbar select,
+.top-toolbar button {
+  flex: 0 0 auto;
+} /* evitar que crezcan y rompan */
+.top-toolbar select {
+  min-width: 220px;
+}
