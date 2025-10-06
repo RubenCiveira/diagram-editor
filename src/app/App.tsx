@@ -18,7 +18,7 @@ import { LocalStorage } from '../storage/providers/local/LocalProvider';
 import { UrlStateProvider } from './url/UrlStateProvider';
 import { FEATURE_FLAGS } from './FeatureFlags';
 import { AppwriteProvider } from '../storage/providers/appwrite/AppwriteProvider';
-import ReportDialog from '../diagram/ui/ReportDialog/ReportDialog';
+// import ReportDialog from '../diagram/ui/ReportDialog/ReportDialog';
 
 export default function App() {
   const fileRef = React.useRef<FileStorage | null>(null);
@@ -26,7 +26,7 @@ export default function App() {
   const topRef = React.useRef<HTMLDivElement | null>(null);
 
   let repository;
-  if ( FEATURE_FLAGS.appWriteRepo) {
+  if (FEATURE_FLAGS.appWriteRepo) {
     repository = new AppwriteProvider();
   } else {
     repository = new LocalStorage();
@@ -46,14 +46,6 @@ export default function App() {
 
   const [showPalette, setShowPalette] = React.useState(false);
   const [showActions, setShowActions] = React.useState(false);
-  const [showExport, setShowExport] = React.useState(true);
-  const [exportDoc, setExportDoc] = React.useState<DiagramModel | null>(null);
-  const [exportRawHtml, setExportRawHtml] = React.useState<string | null>(null);
-
-  const onShowHtml = React.useCallback((html: string) => {
-    setExportRawHtml(html);
-    setShowExport(true);
-  }, []);
 
   const updateGraph = React.useCallback((json: DiagramModel) => {
     const val = { ...json };
@@ -201,13 +193,13 @@ export default function App() {
 
   const Gate = repository.gateComponent();
 
-  const [open, setOpen] = React.useState<boolean>(!!Gate);
+  const [openGate, setOpenGate] = React.useState<boolean>(!!Gate);
 
   React.useEffect(() => {
     validate();
   }, [diagram]);
 
-  if (Gate && open) {
+  if (Gate && openGate) {
     return (
       <div
         style={{
@@ -231,7 +223,7 @@ export default function App() {
             boxShadow: '0 10px 30px rgba(0,0,0,.25)',
           }}
         >
-          <Gate onReady={() => setOpen(false)} />
+          <Gate onReady={() => setOpenGate(false)} />
         </div>
       </div>
     );
@@ -262,7 +254,6 @@ export default function App() {
           onOpenActions={() => setShowActions(true)}
           onUpdateDiagram={(diagram) => updateDiagram(diagram)}
           onBusyAcquire={acquireBusy}
-
         />
       </main>
 
@@ -279,21 +270,10 @@ export default function App() {
         open={showActions}
         onClose={() => setShowActions(false)}
         getGraph={() => diagram}
-        getCanva={ editorRef.current?.getCanva  }
+        getCanva={editorRef.current?.getCanva}
         setGraph={updateGraph}
-        onShowHtml={(html) => onShowHtml(html)}
+        // onShowHtml={(html) => onShowHtml(html)}
         title="Acciones del diagrama"
-      />
-
-      <ReportDialog
-        open={showExport}
-        doc={exportRawHtml ? null : exportDoc}
-        html={exportRawHtml ?? null}
-        onClose={() => {
-          setShowExport(false);
-          setExportDoc(null);
-          setExportRawHtml(null);
-        }}
       />
 
       {/* Overlay global de carga */}

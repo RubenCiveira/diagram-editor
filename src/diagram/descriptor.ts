@@ -26,6 +26,7 @@ export class DiagramDescriptor {
 
   public constructor(
     public readonly doc: DiagramModel,
+    private readonly toSvgRender: () => Promise<string>,
     palette: DiagramElementType[],
   ) {
     this.ELEMENT_KIND_MAP = {};
@@ -63,6 +64,14 @@ export class DiagramDescriptor {
         parents: parentsList,
       });
     });
+  }
+
+  public model(): DiagramModel {
+    return this.doc;
+  }
+
+  public toSvg(): Promise<string> {
+    return  this.toSvgRender();
   }
 
   public actors(): NodeDescriptor[] {

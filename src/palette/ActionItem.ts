@@ -1,5 +1,4 @@
-import { DiagramModel } from '../diagram';
-import { FormDefinition } from '../metadata/FormDefinition';
+import { DiagramDescriptor } from '../diagram/descriptor';
 
 export type ActionItem = {
   id: string;
@@ -7,8 +6,11 @@ export type ActionItem = {
   danger?: boolean;
   subtitle?: string;
   icon?: React.ReactNode;
-  definition?(): void | FormDefinition | Promise<FormDefinition>;
-  run: (graph: DiagramModel, data: any, svg: any) => ActionResult | Promise<ActionResult>;
+
+  exec(graph: DiagramDescriptor): Promise<void> | void;
+
+  // definition?(): void | FormDefinition | Promise<FormDefinition>;
+  // run: (graph: DiagramModel, data: any, svg: any) => ActionResult | Promise<ActionResult>;
 };
 
 export type ActionResult = {

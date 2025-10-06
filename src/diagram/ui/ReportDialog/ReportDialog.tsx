@@ -1,14 +1,11 @@
 import React from 'react';
-import { DiagramModel } from '../..';
 
 export default function ReportDialog({
   open,
-  doc,
   html,
   onClose,
 }: {
   open: boolean;
-  doc: DiagramModel | null;
   html: string | null;
   onClose: () => void;
 }) {
@@ -47,7 +44,7 @@ export default function ReportDialog({
   const headerRef = React.useRef<HTMLDivElement | null>(null);
 
   /* ------------------------ Early return SIN hooks ------------------------- */
-  if (!open || (!doc && !html)) return null;
+  if (!open || !html) return null;
 
   /* -------------------------------- Render -------------------------------- */
   return (

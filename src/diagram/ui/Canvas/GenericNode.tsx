@@ -13,11 +13,11 @@ import WarnInfo from './parts/WarnInfo';
 import { findNodeType, useFindNodeInstance } from '../../../palette';
 import { AppContext } from '../../../app/AppContext';
 
-const DEFAULT_SQUARE = { width: "96px", height: "96px" };
+const DEFAULT_SQUARE = { width: '96px', height: '96px' };
 
-export default function GenericNode({ id, data, selected }: NodeProps<DiagramNode>) {
+export default function GenericNode({ data, selected }: NodeProps<DiagramNode>) {
   const context = React.useContext(AppContext);
-  const typeDef = data?.kind ? findNodeType( data.kind, context?.palette?.nodes ) : undefined;
+  const typeDef = data?.kind ? findNodeType(data.kind, context?.palette?.nodes) : undefined;
   const props = (data as any).props ?? {};
   const label = typeDef ? typeDef.label({ name: data.name, props }) : (data.name ?? 'Elemento');
 
@@ -42,22 +42,24 @@ export default function GenericNode({ id, data, selected }: NodeProps<DiagramNod
     updateNodeInternals(data.id);
   }, [data.id, hasOutgoing, resizable, acceptChild, acceptParen, updateNodeInternals]);
 
-  const { readOnly, openEditorById } = useContext(DiagramUIContext);
+  const { readOnly } = useContext(DiagramUIContext);
 
   const onDbl = (e: React.MouseEvent) => {
     if (!readOnly) {
       e.stopPropagation();
-      openEditorById?.(id);
+      typeDef?.open(data.props, data!);
     }
   };
 
-  const conent = <>
-    {iconNode}
+  const conent = (
+    <>
+      {iconNode}
       <ErrorInfo node={data} />
       <WarnInfo node={data} />
-  </>;
+    </>
+  );
 
-  const base = typeDef?.renderShape?.( props,  conent) ?? (
+  const base = typeDef?.renderShape?.(props, conent) ?? (
     <div
       style={{
         width: '100%',
@@ -75,33 +77,39 @@ export default function GenericNode({ id, data, selected }: NodeProps<DiagramNod
   );
   const domRef = useRef<HTMLElement | null>(null);
   const shape = isValidElement(base)
-    ? cloneElement(base as React.ReactElement, {
-        ref: (el: HTMLElement | null) => (domRef.current = el),
-        className: [(base as any).props.className, 'shape'].filter(Boolean).join(' '),
-      } as any)
+    ? cloneElement(
+        base as React.ReactElement,
+        {
+          ref: (el: HTMLElement | null) => (domRef.current = el),
+          className: [(base as any).props.className, 'shape'].filter(Boolean).join(' '),
+        } as any,
+      )
     : base;
 
   useEffect(() => {
     domRef.current?.classList.add('shape--new');
   }, []);
 
-  if ( resizable ) {
-    baseSize.width = "100%";
-    baseSize.height = "100%";
+  if (resizable) {
+    baseSize.width = '100%';
+    baseSize.height = '100%';
   }
 
   const node = findNodeInstance(data);
 
-  const containerStyle: React.CSSProperties = resizable ? { display: 'inline-flex', 
-        width: "100%", height: "100%",
-        flexDirection: 'column', alignItems: 'center', padding: 2 } : { display: 'inline-flex', 
-        flexDirection: 'column', alignItems: 'center', padding: 2 }
+  const containerStyle: React.CSSProperties = resizable
+    ? {
+        display: 'inline-flex',
+        width: '100%',
+        height: '100%',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: 2,
+      }
+    : { display: 'inline-flex', flexDirection: 'column', alignItems: 'center', padding: 2 };
 
   return (
-    <div
-      onDoubleClick={onDbl}
-      style={containerStyle}
-    >
+    <div onDoubleClick={onDbl} style={containerStyle}>
       <ResizeHandle selected={selected} node={node} />
       <div
         style={{

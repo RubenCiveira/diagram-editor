@@ -1,22 +1,20 @@
 import React from 'react';
-import { DiagramNode } from '../..';
 import { SchemaForm } from '../../../metadata/ui';
 import { MoreHorizontal } from 'lucide-react';
 import { FormDefinition } from '../../../metadata/FormDefinition';
-import type { DiagramElementType, NodeActionContext, NodeActionItem } from '../../../palette/DiagramElementType';
+import type { NodeActionItem } from '../../../palette/DiagramElementType';
+import { FormDetail } from '../../render';
 
 export default function EditNodeDialog({
   open,
   readOnly,
-  node,
   typeDef,
   onCancel,
   onSave,
 }: {
   open: boolean;
   readOnly: boolean;
-  node: DiagramNode | null;
-  typeDef?: DiagramElementType<any>;
+  typeDef: null | FormDetail<any>;
   onCancel: () => void;
   onSave: (updated: { name: string; props: Record<string, any> }) => void;
 }) {
@@ -41,7 +39,7 @@ export default function EditNodeDialog({
       try {
         setIsLoading(true);
         setError(null);
-        const def = await typeDef.definition();
+        const def = await typeDef.definition;
         setDefinition(def || null);
       } catch (err) {
         console.error('Error loading definition:', err);
@@ -55,13 +53,11 @@ export default function EditNodeDialog({
     loadDefinition();
   }, [typeDef]);
 
-  // Inicializa estado cuando cambia el nodo (permitido condicional dentro del efecto)
   React.useEffect(() => {
-    if (!node) return;
-    setName(node.name ?? '');
-    setPropsData((node as any).props ?? {});
+    setName(typeDef?.title ?? '');
+    setPropsData(typeDef?.value);
     setMenuOpen(false);
-  }, [node, open]);
+  }, [open]);
 
   // Cierra dropdown al clickar fuera
   React.useEffect(() => {
@@ -83,33 +79,13 @@ export default function EditNodeDialog({
     [name, propsData, onSave],
   );
 
-  // Para evitar condicionales, creamos un ctx válido aunque el nodo sea null (no se usará si no hay diálogo)
-  const ctx: NodeActionContext = React.useMemo(
-    () => ({
-      node: (node as DiagramNode) ?? ({ id: 'unknown', kind: 'note', position: { x: 0, y: 0 } } as any),
-      name,
-      props: propsData,
-      setName,
-      setProps: (next: any) => {
-        if (typeof next === 'function') {
-          setPropsData((prev) => (next as any)(prev));
-        } else {
-          setPropsData(next);
-        }
-      },
-      close: onCancel,
-      save: performSave,
-    }),
-    [node, name, propsData, onCancel, performSave],
-  );
-
   const [headerActions, setHeaderActions] = React.useState<NodeActionItem[]>([]);
   const [moreActions, setMoreActions] = React.useState<NodeActionItem[]>([]);
 
   React.useEffect(() => {
     let cancelled = false;
     const run = async () => {
-      const raw = await typeDef?.getHeaderActions?.(propsData, node!);
+      const raw = await typeDef?.actions;
       if (!cancelled) setHeaderActions((raw ?? []).filter(Boolean));
     };
     run();
@@ -117,34 +93,32 @@ export default function EditNodeDialog({
       cancelled = true;
     };
     // Incluye todas las deps que usas dentro
-  }, [typeDef, propsData, node, ctx]);
+  }, [typeDef, propsData]);
+
   React.useEffect(() => {
     let cancelled = false;
     const run = async () => {
-      const raw = await typeDef?.getMoreMenuActions?.(propsData, node!);
-      if (!cancelled) setMoreActions((raw??[]).filter(Boolean));
+      const raw = await typeDef?.menu;
+      if (!cancelled) setMoreActions((raw ?? []).filter(Boolean));
     };
     run();
     return () => {
       cancelled = true;
     };
-  }, [typeDef, propsData, node, ctx]);
+  }, [typeDef, propsData]);
 
-  const handleClickAction = React.useCallback(
-    async (action: NodeActionItem) => {
-      try {
-        await action.onClick();
-      } catch (e: any) {
-        alert(e?.message ?? String(e));
-      }
-    },
-    [ctx],
-  );
+  const handleClickAction = React.useCallback(async (action: NodeActionItem) => {
+    try {
+      await action.onClick();
+    } catch (e: any) {
+      alert(e?.message ?? String(e));
+    }
+  }, []);
 
   const handleSubmit = React.useCallback(() => performSave(), [performSave]);
 
   // ---- Salida condicional (DESPUÉS de declarar todos los hooks) ----
-  if (!open || !node || !typeDef) return null;
+  if (!open || !typeDef) return null;
 
   // ---- Render del diálogo ----
   return (
@@ -247,18 +221,19 @@ export default function EditNodeDialog({
           </div>
         </div>
 
-        {node.errors && (
+        {typeDef.errors && typeDef.errors.length > 0 && (
           <div>
-            <h3>Errors:</h3> {node.errors}
+            <h3>Errors:</h3> {typeDef.errors}
           </div>
         )}
-        {node.warns && (
+        {typeDef.warns && typeDef.warns.length > 0 && (
           <div>
-            <h3>Warns:</h3> {node.warns}
+            <h3>Warns:</h3> {typeDef.warns}
           </div>
         )}
 
         {/* Campo "Nombre" */}
+        { typeDef?.title !== undefined && 
         <div style={{ marginBottom: 12 }}>
           <label htmlFor="node-name" style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>
             Nombre
@@ -270,7 +245,7 @@ export default function EditNodeDialog({
             placeholder="Nombre del elemento"
             style={{ width: '100%', padding: 8, borderRadius: 8, border: '1px solid #e5e7eb' }}
           />
-        </div>
+        </div> }
 
         {/* Formulario JSON Schema */}
         {definition && (

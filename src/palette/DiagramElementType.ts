@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
 import type { DiagramModel, DiagramNode } from '../diagram';
 import type { ElementKind } from '../diagram';
-import { FormDefinition } from '../metadata/FormDefinition';
 
 export type NodeActionContext = {};
 
@@ -51,8 +50,7 @@ export interface DiagramElementType<P = any> {
   /** Icono para el nodo (interior) */
   nodeIcon?(props: P): ReactNode;
 
-  /** Esquema JSON para construir el formulario de edición */
-  definition(): FormDefinition | Promise<FormDefinition>;
+  open(props: P, node: DiagramNode): Promise<void> | void;
 
   /** Props por defecto para nuevo nodo */
   defaultProps(): P;
@@ -120,8 +118,4 @@ export interface DiagramElementType<P = any> {
    * se usa el render genérico por tipo (cuadrado o círculo para API).
    */
   renderNodeContent?(props: P, node: DiagramNode): ReactNode;
-
-  getHeaderActions?(props: P, content: DiagramNode): Promise<NodeActionItem[]> | NodeActionItem[];
-
-  getMoreMenuActions?(props: P, content: DiagramNode): Promise<NodeActionItem[]> | NodeActionItem[];
 }

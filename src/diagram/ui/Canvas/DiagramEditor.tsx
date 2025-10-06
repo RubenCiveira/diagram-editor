@@ -27,9 +27,7 @@ import { useConnectValidation } from './hooks/useConnectValidation';
 import { useOnConnect } from './hooks/useOnConnect';
 import { useAddElement } from './hooks/useAddElement';
 import { useSerialize } from './hooks/useSerialize';
-import { useEditNode } from './hooks/useEditNode';
-
-// import { NODE_TYPES as NODE_TYPES_STABLE, EDGE_TYPES as EDGE_TYPES_STABLE } from '../reactflowTypes';
+import { useEditDialog } from './hooks/useEditDialog';
 import { DiagramUIContext, FromHandle } from '../DiagramUIContext';
 import { usePreconnectValidation } from './hooks/usePreconnectValidation';
 import { useUndoRedo } from './hooks/useUndoRedo';
@@ -41,6 +39,10 @@ import GenericEdge from './GenericEdge';
 import GenericNode from './GenericNode';
 import { useNestValidation } from './hooks/useNestValidation';
 import { AppContext } from '../../../app/AppContext';
+import { ReportResult, FormDetail, DiagramRender } from '../../render';
+import ReportDialog from '../ReportDialog/ReportDialog';
+import { useReportDialog } from './hooks/useReportDialog';
+import { attachDiagramRender } from '../../../dialog/dialogGateway';
 
 const NODE_TYPES_STABLE = {
   c4: GenericNode,
@@ -333,11 +335,8 @@ function DiagramEditorImpl(
   const onConnect = useOnConnect(context?.palette, setAllEdges as any, canConnect, canNest, nodes as any[]);
   const precheckConnect = usePreconnectValidation(context?.palette, nodes as any[]);
 
-  const { open, currentNode, currentType, onNodeDoubleClick, onCancel, onSave } = useEditNode(
-    nodes as any[],
-    context?.palette,
-    setNodes as any,
-  );
+  const { editOpened, formDetail, openEdit, onCancelEdit, onSaveEdit } = useEditDialog(setNodes as any);
+  const { openedReport, reportContent, openReport, onCloseReport } = useReportDialog();
 
   const serialize = useSerialize(nodes as any[], edges as any[], createdAtRef.current, views as any);
 
@@ -354,16 +353,16 @@ function DiagramEditorImpl(
     targetHandle?: string;
   }>(null);
 
-  const openEditorById = React.useCallback(
-    (id: string) => {
-      const n = (nodes as any[]).find((nn) => nn.id === id);
-      if (!n) return;
-      // reutiliza tu lógica actual:
-      // si tienes onNodeDoubleClick(event,node), puedes invocarla con un event “falso”
-      onNodeDoubleClick?.({} as any, n as any);
+  const render: DiagramRender = {
+    async showEdit(props: FormDetail<any>): Promise<any> {
+      return openEdit(props);
     },
-    [nodes, onNodeDoubleClick],
-  );
+    async showReport(html: string): Promise<ReportResult> {
+      return openReport(html);
+    },
+  };
+
+  attachDiagramRender(render);
 
   /** Añadir con posicionamiento mejorado */
   const handleAdd = React.useCallback(
@@ -396,15 +395,20 @@ function DiagramEditorImpl(
         } else {
           setPendingAutoConnect({ source: sourceId, target: newId });
         }
-        setAllEdges((eds: any[]) => addEdge( {
-                source: sourceId,
-                target: newId,
-                sourceHandle: from === 'children' ? 'parent' : 'out',
-                targetHandle: from === 'children' ? 'children' : 'in',
-                type: 'c4',
-                markerEnd: { type: MarkerType.ArrowClosed },
-                style: { strokeWidth: 2.75 },
-              } as Edge, eds, ) );
+        setAllEdges((eds: any[]) =>
+          addEdge(
+            {
+              source: sourceId,
+              target: newId,
+              sourceHandle: from === 'children' ? 'parent' : 'out',
+              targetHandle: from === 'children' ? 'children' : 'in',
+              type: 'c4',
+              markerEnd: { type: MarkerType.ArrowClosed },
+              style: { strokeWidth: 2.75 },
+            } as Edge,
+            eds,
+          ),
+        );
         setPendingFrom(null);
       }
 
@@ -546,7 +550,7 @@ function DiagramEditorImpl(
           },
           design: isDesign,
           readOnly: readOnly,
-          openEditorById,
+          render,
         }}
       >
         <ReactFlow
@@ -566,7 +570,7 @@ function DiagramEditorImpl(
           onNodesChange={onNodesChangeWithHistory}
           onEdgesChange={onEdgesChangeWithHistory}
           onConnect={onConnect}
-          onNodeDoubleClick={onNodeDoubleClick}
+          // onNodeDoubleClick={onNodeDoubleClick}
           nodeTypes={NODE_TYPES_STABLE}
           edgeTypes={EDGE_TYPES_STABLE}
           connectionMode={ConnectionMode.Strict}
@@ -589,34 +593,19 @@ function DiagramEditorImpl(
       {/* Diálogo de edición */}
       <EditNodeDialog
         readOnly={mode == 'readonly'}
-        open={open}
-        node={currentNode}
-        typeDef={currentType}
-        onCancel={onCancel}
-        onSave={onSave}
+        open={editOpened}
+        // node={currentNode}
+        typeDef={formDetail || null}
+        onCancel={onCancelEdit}
+        onSave={onSaveEdit}
       />
 
-      {/* <ExportDiagramDialog
-        open={showExport}
-        doc={exportRawHtml ? null : exportDoc}
-        rawHtml={exportRawHtml ?? null}
-        buildHtml={buildDiagramHTML}
-        onClose={() => {
-          setShowExport(false);
-          setExportDoc(null);
-          setExportRawHtml(null);
-        }}
-      /> */}
-
-      {/* Diálogo de exportación */}
-      {/* <ActionPalette
-        open={showActions}
-        onClose={() => setShowActions(false)}
-        getGraph={getGraph}
-        setGraph={setGraph}
-        onShowHtml={(html) => onShowHtml(html)}
-        title="Acciones del diagrama"
-      /> */}
+      {/* Report dialog */}
+      <ReportDialog
+        open={openedReport}
+        html={reportContent ?? null}
+        onClose={ onCloseReport }
+      />
 
       {/* Diálogo de creación/edición de vistas */}
       <ViewDialog
