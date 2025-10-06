@@ -540,21 +540,14 @@ function DiagramEditorImpl(
           selectionMode={SelectionMode.Partial}
           zoomOnScroll={false}
           zoomOnPinch={true}
+          zoomOnDoubleClick={false}
           nodes={nodes as any}
           edges={edges as any}
-          minZoom={0.02} // permite alejar mucho más
+          minZoom={0.02}
           maxZoom={4}
           onNodesChange={onNodesChangeWithHistory}
           onEdgesChange={onEdgesChangeWithHistory}
           onConnect={onConnect}
-          // onNodeDoubleClick={onNodeDoubleClick}
-          // onNodeDoubleClick={(event, node) => {
-          //   event.stopPropagation();              // evita que el pane lo procese
-          //   // tu lógica: abrir diálogo, etc.
-          //   const typeDef = findNodeType(node.data.kind, context.palette?.nodes);
-          //   console.log( typeDef );
-          //   typeDef?.open(nodedata.props, data!);
-          // }}
           nodeTypes={NODE_TYPES_STABLE}
           edgeTypes={EDGE_TYPES_STABLE}
           connectionMode={ConnectionMode.Strict}

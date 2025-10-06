@@ -43,14 +43,9 @@ export default function GenericNode({ data, selected }: NodeProps<DiagramNode>) 
     updateNodeInternals(data.id);
   }, [data.id, hasOutgoing, resizable, acceptChild, acceptParen, updateNodeInternals]);
 
-  const { readOnly } = useContext(DiagramUIContext);
-
   const onDbl = (e: React.MouseEvent) => {
-    console.log( "IS ", readOnly );
-    // if (!readOnly) {
-      e.stopPropagation();
-      typeDef?.open(data.props, data!, new RealtimeDiagram(setNodes!) );
-    // }
+    e.stopPropagation();
+    typeDef?.open(data.props, data!, new RealtimeDiagram(setNodes!));
   };
 
   const conent = (
