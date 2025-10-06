@@ -1,4 +1,4 @@
-import React, { isValidElement, cloneElement, useMemo, useEffect, useContext, useRef } from 'react';
+import React, { isValidElement, cloneElement, useMemo, useEffect, useRef } from 'react';
 import { NodeProps, useStore, useUpdateNodeInternals } from 'reactflow';
 import { RealtimeDiagram, type DiagramNode } from '../..';
 import { DiagramUIContext } from '../DiagramUIContext';
