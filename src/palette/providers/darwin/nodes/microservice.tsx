@@ -26,6 +26,8 @@ export class MicroserviceElement implements DiagramElementType<MicroserviceProps
       errors: node.errors,
       warns: node.warns,
       definition: this.definition(),
+      actions: this.getHeaderActions(props, node),
+      menu: this.getMoreMenuActions(props, node),
     });
     if (data.accepted) {
       console.log(data.title);
@@ -76,12 +78,13 @@ export class MicroserviceElement implements DiagramElementType<MicroserviceProps
   }
 
   getHeaderActions(_props: MicroserviceProps, _content: DiagramNode): NodeActionItem[] {
-    return [];
+    return [
+      new CheckPending({ url: '', disabled: false }),
+    ];
   }
 
   getMoreMenuActions(_props: MicroserviceProps, _content: DiagramNode): NodeActionItem[] {
     return [
-      new CheckPending({ url: '', disabled: false }),
       new Merge({ url: '', disabled: false }),
       new Deploy({ url: '', disabled: false }),
       new DeployConfig({ url: '', disabled: false }),
