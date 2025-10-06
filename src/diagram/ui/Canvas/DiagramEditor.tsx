@@ -19,7 +19,6 @@ import './DiagramEditor.scss';
 import { Plus, Download } from 'lucide-react';
 
 import type { DiagramModel, DiagramNode as DiagramNodeData, DiagramView, EditorMode } from '../..';
-import EditNodeDialog from '../EditDialog/EditNodeDialog';
 
 import { useReactFlowFit } from './hooks/useReactFlowFit';
 import { useHydrateFromJSON } from './hooks/useHydrateFromJSON';
@@ -27,7 +26,6 @@ import { useConnectValidation } from './hooks/useConnectValidation';
 import { useOnConnect } from './hooks/useOnConnect';
 import { useAddElement } from './hooks/useAddElement';
 import { useSerialize } from './hooks/useSerialize';
-import { useEditDialog } from './hooks/useEditDialog';
 import { DiagramUIContext, FromHandle } from '../DiagramUIContext';
 import { usePreconnectValidation } from './hooks/usePreconnectValidation';
 import { useUndoRedo } from './hooks/useUndoRedo';
@@ -39,10 +37,6 @@ import GenericEdge from './GenericEdge';
 import GenericNode from './GenericNode';
 import { useNestValidation } from './hooks/useNestValidation';
 import { AppContext } from '../../../app/AppContext';
-import { ReportResult, FormDetail, DiagramRender } from '../../render';
-import ReportDialog from '../ReportDialog/ReportDialog';
-import { useReportDialog } from './hooks/useReportDialog';
-import { attachDiagramRender } from '../../../dialog/dialogGateway';
 
 const NODE_TYPES_STABLE = {
   c4: GenericNode,
@@ -146,8 +140,6 @@ function DiagramEditorImpl(
 
   const context = React.useContext(AppContext);
 
-  // RF instance + fit control seguro
-  // const { onInit, fit } = useReactFlowFit();
 
   React.useEffect(() => {
     const isDesign = mode === 'design' && currentViewId === '';
@@ -157,6 +149,7 @@ function DiagramEditorImpl(
         ...e,
         hidden: hiddenNodes.includes(e.id),
         draggable: isDesign,
+        selectable: true,
         connectable: canConnect,
         data: { ...e.data, uiMode: mode },
       })),
@@ -203,14 +196,13 @@ function DiagramEditorImpl(
     return { x: center.x + dx, y: center.y + dy };
   }, [screenToFlowPosition]);
 
-  // const addElement = useAddElement(setNodes as any);
   const addElement = useAddElement(context.palette, setAllNodes as any, { centerOfViewport });
 
   // createdAt persistido si el doc ya lo traía
   const createdAtRef = React.useRef<string | undefined>(undefined);
-  const readOnly = mode !== 'design';
+  const readOnly = mode === 'readonly';
   const isDesign = mode === 'design' && currentViewId === '';
-
+  
   const { commit, undo, redo, onNodesChangeWithHistory, onEdgesChangeWithHistory } = useUndoRedo(
     nodes as any[],
     setAllNodes as any,
@@ -277,8 +269,6 @@ function DiagramEditorImpl(
     onError: (msg) => alert(msg),
     onImported: () => {
       commit();
-      // opcional: seleccionar los nodos pegados, o hacer fit parcial, etc.
-      // rfInstance?.setNodes(n => n.map(nd => ({...nd, selected: nodeIds.includes(nd.id)})));
     },
     onBusyAcquire,
     pasteOffset: { dx: 48, dy: 24 }, // desplazamiento del lote pegado
@@ -335,9 +325,6 @@ function DiagramEditorImpl(
   const onConnect = useOnConnect(context?.palette, setAllEdges as any, canConnect, canNest, nodes as any[]);
   const precheckConnect = usePreconnectValidation(context?.palette, nodes as any[]);
 
-  const { editOpened, formDetail, openEdit, onCancelEdit, onSaveEdit } = useEditDialog(setNodes as any);
-  const { openedReport, reportContent, openReport, onCloseReport } = useReportDialog();
-
   const serialize = useSerialize(nodes as any[], edges as any[], createdAtRef.current, views as any);
 
   React.useEffect(() => {
@@ -352,17 +339,6 @@ function DiagramEditorImpl(
     sourceHandle?: string;
     targetHandle?: string;
   }>(null);
-
-  const render: DiagramRender = {
-    async showEdit(props: FormDetail<any>): Promise<any> {
-      return openEdit(props);
-    },
-    async showReport(html: string): Promise<ReportResult> {
-      return openReport(html);
-    },
-  };
-
-  attachDiagramRender(render);
 
   /** Añadir con posicionamiento mejorado */
   const handleAdd = React.useCallback(
@@ -550,7 +526,8 @@ function DiagramEditorImpl(
           },
           design: isDesign,
           readOnly: readOnly,
-          render,
+          setNodes: setNodes,
+          // render: render,
         }}
       >
         <ReactFlow
@@ -571,6 +548,13 @@ function DiagramEditorImpl(
           onEdgesChange={onEdgesChangeWithHistory}
           onConnect={onConnect}
           // onNodeDoubleClick={onNodeDoubleClick}
+          // onNodeDoubleClick={(event, node) => {
+          //   event.stopPropagation();              // evita que el pane lo procese
+          //   // tu lógica: abrir diálogo, etc.
+          //   const typeDef = findNodeType(node.data.kind, context.palette?.nodes);
+          //   console.log( typeDef );
+          //   typeDef?.open(nodedata.props, data!);
+          // }}
           nodeTypes={NODE_TYPES_STABLE}
           edgeTypes={EDGE_TYPES_STABLE}
           connectionMode={ConnectionMode.Strict}
@@ -589,23 +573,6 @@ function DiagramEditorImpl(
           <Background gap={16} />
         </ReactFlow>
       </DiagramUIContext.Provider>
-
-      {/* Diálogo de edición */}
-      <EditNodeDialog
-        readOnly={mode == 'readonly'}
-        open={editOpened}
-        // node={currentNode}
-        typeDef={formDetail || null}
-        onCancel={onCancelEdit}
-        onSave={onSaveEdit}
-      />
-
-      {/* Report dialog */}
-      <ReportDialog
-        open={openedReport}
-        html={reportContent ?? null}
-        onClose={ onCloseReport }
-      />
 
       {/* Diálogo de creación/edición de vistas */}
       <ViewDialog

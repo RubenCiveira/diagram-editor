@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReportResult } from '../../../render';
+import { ReportResult } from '../../../../dialog/model';
 
 export function useReportDialog() {
   const [openedReport, setOpenedRport] = React.useState(true);

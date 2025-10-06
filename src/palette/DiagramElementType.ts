@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { DiagramModel, DiagramNode } from '../diagram';
+import type { DiagramModel, DiagramNode, RealtimeDiagram } from '../diagram';
 import type { ElementKind } from '../diagram';
 
 export type NodeActionContext = {};
@@ -50,7 +50,7 @@ export interface DiagramElementType<P = any> {
   /** Icono para el nodo (interior) */
   nodeIcon?(props: P): ReactNode;
 
-  open(props: P, node: DiagramNode): Promise<void> | void;
+  open(props: P, node: DiagramNode, graph: RealtimeDiagram): Promise<void> | void;
 
   /** Props por defecto para nuevo nodo */
   defaultProps(): P;

@@ -1,6 +1,6 @@
 import { Cog } from 'lucide-react';
 import type { DiagramElementType, NodeActionItem } from '../../../DiagramElementType';
-import type { DiagramNode, ElementKind } from '../../../../diagram';
+import type { DiagramNode, ElementKind, RealtimeDiagram } from '../../../../diagram';
 import { CheckPending } from '../contextuals/CheckPending';
 import { Merge } from '../contextuals/Merge';
 import { Deploy } from '../contextuals/Deploy';
@@ -16,19 +16,21 @@ export class MicroserviceElement implements DiagramElementType<MicroserviceProps
   kind: ElementKind = 'microservice';
   title = 'Microservicio';
   paletteIcon = (<Cog size={18} />);
-  
-  constructor(public readonly render: DialogRender) {
-  }
 
-  async open(props: MicroserviceProps, node: DiagramNode): Promise<void> {
-    await this.render.showEdit({
-      id: node.id,
+  constructor(public readonly render: DialogRender) {}
+
+  async open(props: MicroserviceProps, node: DiagramNode, diagram: RealtimeDiagram): Promise<void> {
+    const data = await this.render.showEdit({
       value: props,
       title: node.name || node.id,
       errors: node.errors,
       warns: node.warns,
       definition: this.definition(),
     });
+    if (data.accepted) {
+      console.log(data.title);
+      diagram.update(node.id, data.title, data.data);
+    }
   }
 
   definition() {
@@ -76,13 +78,13 @@ export class MicroserviceElement implements DiagramElementType<MicroserviceProps
   getHeaderActions(_props: MicroserviceProps, _content: DiagramNode): NodeActionItem[] {
     return [];
   }
-  
+
   getMoreMenuActions(_props: MicroserviceProps, _content: DiagramNode): NodeActionItem[] {
     return [
-      new CheckPending({url: '', disabled: false}),
-      new Merge({url: '', disabled: false}),
-      new Deploy({url: '', disabled: false}),
-      new DeployConfig({url: '', disabled: false}),
+      new CheckPending({ url: '', disabled: false }),
+      new Merge({ url: '', disabled: false }),
+      new Deploy({ url: '', disabled: false }),
+      new DeployConfig({ url: '', disabled: false }),
     ];
   }
 }

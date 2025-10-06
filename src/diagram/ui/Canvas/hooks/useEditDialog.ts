@@ -1,40 +1,32 @@
 import { useCallback, useState } from 'react';
-import type { DiagramNode } from '../../..';
-import { FormDetail } from '../../../render';
+import { FormDetail } from '../../../../dialog/model';
 
-export function useEditDialog(setNodes: (updater: any) => void) {
+export function useEditDialog() {
   const [editOpened, setOpenedEdit] = useState(false);
   const [formDetail, setFormDetail] = useState<null | FormDetail<any>>();
   const [promise, setPromise] = useState<any>(null);
 
   const openEdit = useCallback((detail: FormDetail<any>) => {
     setOpenedEdit(true);
-    setFormDetail( detail );
+    setFormDetail(detail);
     return new Promise((resolve) => {
-      setPromise( { use: resolve } );
+      setPromise({ use: resolve });
     });
   }, []);
 
   const onCancelEdit = useCallback(() => {
+    promise?.use({ data: formDetail?.value, accepted: false });
     setOpenedEdit(false);
     setFormDetail(null);
-    promise.use( { data: formDetail?.value, accepted: false } );
   }, []);
 
   const onSaveEdit = useCallback(
     (updated: { name: string; props: Record<string, any> }) => {
-      setNodes((ns: any[]) =>
-        ns.map((n) =>
-          n.id === formDetail?.id
-            ? { ...n, data: { ...(n.data as DiagramNode), name: updated.name, props: updated.props } }
-            : n,
-        ),
-      );
+      promise?.use({ data: updated.props, title: updated.name, accepted: true });
       setOpenedEdit(false);
       setFormDetail(null);
-      promise.use( { data: updated.props, accepted: true} );
     },
-    [setNodes, formDetail],
+    [formDetail],
   );
 
   return { editOpened, formDetail, openEdit, onCancelEdit, onSaveEdit };

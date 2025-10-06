@@ -1,6 +1,6 @@
 import { Shield } from 'lucide-react';
 import type { DiagramElementType } from '../../../DiagramElementType';
-import type { DiagramNode, ElementKind } from '../../../../diagram';
+import type { DiagramNode, ElementKind, RealtimeDiagram } from '../../../../diagram';
 import { DialogRender } from '../../../../dialog/DialogRender';
 
 export type OAuthProxyProps = {
@@ -18,16 +18,19 @@ export class OAuthProxyElement implements DiagramElementType<OAuthProxyProps> {
 
   constructor(public readonly render: DialogRender) {}
 
-  async open(props: OAuthProxyProps, node: DiagramNode): Promise<void> {
-    await this.render.showEdit({
-      id: node.id,
-      value: props,
-      title: node.name || node.id,
-      errors: node.errors,
-      warns: node.warns,
-      definition: this.definition(),
-    });
-  }
+  async open(props: OAuthProxyProps, node: DiagramNode, diagram: RealtimeDiagram): Promise<void> {
+      const data = await this.render.showEdit({
+        value: props,
+        title: node.name || node.id,
+        errors: node.errors,
+        warns: node.warns,
+        definition: this.definition(),
+      });
+      if( data.accepted ) {
+        console.log( data.title );
+        diagram.update(node.id, data.title, data.data );
+      }
+    }
 
   definition() {
     return {

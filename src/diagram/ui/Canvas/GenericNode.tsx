@@ -1,6 +1,6 @@
 import React, { isValidElement, cloneElement, useMemo, useEffect, useContext, useRef } from 'react';
 import { NodeProps, useStore, useUpdateNodeInternals } from 'reactflow';
-import type { DiagramNode } from '../..';
+import { RealtimeDiagram, type DiagramNode } from '../..';
 import { DiagramUIContext } from '../DiagramUIContext';
 import InHandle from './parts/InHandle';
 import OutHandle from './parts/OutHandle';
@@ -17,6 +17,7 @@ const DEFAULT_SQUARE = { width: '96px', height: '96px' };
 
 export default function GenericNode({ data, selected }: NodeProps<DiagramNode>) {
   const context = React.useContext(AppContext);
+  const { setNodes } = React.useContext(DiagramUIContext);
   const typeDef = data?.kind ? findNodeType(data.kind, context?.palette?.nodes) : undefined;
   const props = (data as any).props ?? {};
   const label = typeDef ? typeDef.label({ name: data.name, props }) : (data.name ?? 'Elemento');
@@ -45,10 +46,11 @@ export default function GenericNode({ data, selected }: NodeProps<DiagramNode>) 
   const { readOnly } = useContext(DiagramUIContext);
 
   const onDbl = (e: React.MouseEvent) => {
-    if (!readOnly) {
+    console.log( "IS ", readOnly );
+    // if (!readOnly) {
       e.stopPropagation();
-      typeDef?.open(data.props, data!);
-    }
+      typeDef?.open(data.props, data!, new RealtimeDiagram(setNodes!) );
+    // }
   };
 
   const conent = (

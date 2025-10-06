@@ -1,6 +1,6 @@
 import { CircleUserRound, Contact, ShieldUser, User } from 'lucide-react';
 import type { DiagramElementType } from '../../../DiagramElementType';
-import type { DiagramModel, DiagramNode, ElementKind } from '../../../../diagram';
+import type { DiagramModel, DiagramNode, ElementKind, RealtimeDiagram } from '../../../../diagram';
 import { ReactNode } from 'react';
 import { DialogRender } from '../../../../dialog/DialogRender';
 
@@ -16,15 +16,18 @@ export class DarwinUser implements DiagramElementType<UserProps> {
   constructor(public readonly render: DialogRender) {
   }
 
-  async open(props: UserProps, node: DiagramNode): Promise<void> {
-    await this.render.showEdit({
-      id: node.id,
+  async open(props: UserProps, node: DiagramNode, diagram: RealtimeDiagram): Promise<void> {
+    const data = await this.render.showEdit({
       value: props,
       title: node.name || node.id,
       errors: node.errors,
       warns: node.warns,
       definition: this.definition(),
     });
+    if( data.accepted ) {
+      console.log( data.title );
+      diagram.update(node.id, data.title, data.data );
+    }
   }
 
   definition() {

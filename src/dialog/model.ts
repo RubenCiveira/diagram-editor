@@ -3,6 +3,7 @@ import { NodeActionItem } from '../palette/DiagramElementType';
 
 export type FormResult<T> = {
   data: T;
+  title: string;
   accepted: boolean;
 }
 
@@ -11,7 +12,7 @@ export type ReportResult = {
 }
 
 export type FormDetail<T> = {
-  id?: string;
+  // id?: string;
   value?: T;
   title?: string;
   menu?: Promise<NodeActionItem[]> | NodeActionItem[];

@@ -1,5 +1,5 @@
 import { ExternalLink } from 'lucide-react';
-import { DiagramNode, ElementKind } from '../../../../diagram';
+import { DiagramNode, ElementKind, RealtimeDiagram } from '../../../../diagram';
 import { DiagramElementType } from '../../../DiagramElementType';
 import { DialogRender } from '../../../../dialog/DialogRender';
 
@@ -14,19 +14,21 @@ export class ExternalTransactionElement implements DiagramElementType<ExternalTr
   kind: ElementKind = 'externalTransaction';
   title = 'Transactional';
   paletteIcon = (<ExternalLink size={18} />);
-  
-  constructor(public readonly render: DialogRender) {
-  }
 
-  async open(props: ExternalTransactionProps, node: DiagramNode): Promise<void> {
-    await this.render.showEdit({
-      id: node.id,
+  constructor(public readonly render: DialogRender) {}
+
+  async open(props: ExternalTransactionProps, node: DiagramNode, diagram: RealtimeDiagram): Promise<void> {
+    const data = await this.render.showEdit({
       value: props,
       title: node.name || node.id,
       errors: node.errors,
       warns: node.warns,
       definition: this.definition(),
     });
+    if (data.accepted) {
+      console.log(data.title);
+      diagram.update(node.id, data.title, data.data);
+    }
   }
 
   definition() {

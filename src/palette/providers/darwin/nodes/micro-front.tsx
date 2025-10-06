@@ -1,6 +1,6 @@
 import { Puzzle } from 'lucide-react';
 import type { DiagramElementType, IncomingEdge } from '../../../DiagramElementType';
-import { DiagramNode, ElementKind } from '../../../../diagram';
+import { DiagramNode, ElementKind, RealtimeDiagram } from '../../../../diagram';
 import { DialogRender } from '../../../../dialog/DialogRender';
 
 export type MicroFrontProps = {
@@ -16,18 +16,20 @@ export class MicroFrontElement implements DiagramElementType<MicroFrontProps> {
   title = 'Micro Front';
   paletteIcon = (<Puzzle size={18} />);
 
-  constructor(public readonly render: DialogRender) {
-  }
+  constructor(public readonly render: DialogRender) {}
 
-  async open(props: MicroFrontProps, node: DiagramNode): Promise<void> {
-    await this.render.showEdit({
-      id: node.id,
+  async open(props: MicroFrontProps, node: DiagramNode, diagram: RealtimeDiagram): Promise<void> {
+    const data = await this.render.showEdit({
       value: props,
       title: node.name || node.id,
       errors: node.errors,
       warns: node.warns,
       definition: this.definition(),
     });
+    if (data.accepted) {
+      console.log(data.title);
+      diagram.update(node.id, data.title, data.data);
+    }
   }
 
   definition() {

@@ -18,7 +18,12 @@ import { LocalStorage } from '../storage/providers/local/LocalProvider';
 import { UrlStateProvider } from './url/UrlStateProvider';
 import { FEATURE_FLAGS } from './FeatureFlags';
 import { AppwriteProvider } from '../storage/providers/appwrite/AppwriteProvider';
-// import ReportDialog from '../diagram/ui/ReportDialog/ReportDialog';
+import { useEditDialog } from '../diagram/ui/Canvas/hooks/useEditDialog';
+import { useReportDialog } from '../diagram/ui/Canvas/hooks/useReportDialog';
+import { ReportResult, FormDetail, DiagramRender } from '../dialog/model';
+import { attachDiagramRender } from '../dialog/dialogGateway';
+import EditNodeDialog from '../dialog/uid/EditDialog/EditNodeDialog';
+import ReportDialog from '../dialog/uid/ReportDialog/ReportDialog';
 
 export default function App() {
   const fileRef = React.useRef<FileStorage | null>(null);
@@ -46,6 +51,19 @@ export default function App() {
 
   const [showPalette, setShowPalette] = React.useState(false);
   const [showActions, setShowActions] = React.useState(false);
+
+  const { editOpened, formDetail, openEdit, onCancelEdit, onSaveEdit } = useEditDialog();
+  const { openedReport, reportContent, openReport, onCloseReport } = useReportDialog();
+
+  const render: DiagramRender = {
+    async showEdit(props: FormDetail<any>): Promise<any> {
+      return openEdit(props);
+    },
+    async showReport(html: string): Promise<ReportResult> {
+      return openReport(html);
+    },
+  };
+  attachDiagramRender(render);
 
   const updateGraph = React.useCallback((json: DiagramModel) => {
     const val = { ...json };
@@ -288,6 +306,17 @@ export default function App() {
     <BrowserRouter>
       <UrlStateProvider>
         <AppContext.Provider value={context}>{body}</AppContext.Provider>
+        {/* Diálogo de edición */}
+        <EditNodeDialog
+          readOnly={mode == 'readonly'}
+          open={editOpened}
+          typeDef={formDetail || null}
+          onCancel={onCancelEdit}
+          onSave={onSaveEdit}
+        />
+
+        {/* Report dialog */}
+        <ReportDialog open={openedReport} html={reportContent ?? null} onClose={onCloseReport} />
       </UrlStateProvider>
     </BrowserRouter>
   );

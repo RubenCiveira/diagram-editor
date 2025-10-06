@@ -13,7 +13,6 @@ export class ExportDetails implements ActionItem {
 
   async exec(graph: DiagramDescriptor): Promise<void> {
     const data = await this.render.showEdit({
-      id: '',
       value: {},
       definition: this.definition(),
     });

@@ -1,5 +1,5 @@
 import { Database } from 'lucide-react';
-import { DiagramNode, ElementKind } from '../../../../diagram';
+import { DiagramNode, ElementKind, RealtimeDiagram } from '../../../../diagram';
 import { DialogRender } from '../../../../dialog/DialogRender';
 import { DiagramElementType } from '../../../DiagramElementType';
 
@@ -15,15 +15,18 @@ export class DatabaseElement implements DiagramElementType<DatabaseProps> {
 
   constructor(public readonly render: DialogRender) {}
 
-  async open(props: DatabaseProps, node: DiagramNode): Promise<void> {
-    await this.render.showEdit({
-      id: node.id,
+  async open(props: DatabaseProps, node: DiagramNode, diagram: RealtimeDiagram): Promise<void> {
+    const data = await this.render.showEdit({
       value: props,
       title: node.name || node.id,
       errors: node.errors,
       warns: node.warns,
       definition: this.definition(),
     });
+    if (data.accepted) {
+      console.log(data.title);
+      diagram.update(node.id, data.title, data.data);
+    }
   }
 
   definition() {

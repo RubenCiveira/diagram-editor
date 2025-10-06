@@ -1,3 +1,4 @@
+import { Node } from 'reactflow';
 import { z } from 'zod';
 
 /* ============================================================================
@@ -74,6 +75,22 @@ export type DiagramModel = {
   edges: DiagramEdge[];
   views: DiagramView[];
 };
+
+export class RealtimeDiagram {
+  public constructor(
+    private readonly setNodes: React.Dispatch<React.SetStateAction<Node<any, string | undefined>[]>>
+  ) {
+  }
+  update(id: string, name: string, props: any) {
+    this.setNodes((ns: any[]) =>
+        ns.map((n) =>
+          n.id === id
+            ? { ...n, data: { ...(n.data as DiagramNode), name: name, props: props } }
+            : n,
+        ),
+      );
+  }
+}
 
 /* ============================================================================
  * Zod schemas (tolerantes con campos opcionales)

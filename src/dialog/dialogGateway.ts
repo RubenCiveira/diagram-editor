@@ -1,4 +1,4 @@
-import { DiagramRender } from '../diagram/render';
+import { DiagramRender } from './model';
 
 let _render: DiagramRender | null = null;
 

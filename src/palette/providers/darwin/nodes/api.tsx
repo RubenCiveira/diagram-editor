@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { Code } from 'lucide-react';
 import { DiagramElementType } from '../../../DiagramElementType';
-import type { ElementKind } from '../../../../diagram';
+import type { ElementKind, RealtimeDiagram } from '../../../../diagram';
 import { DiagramModel, DiagramNode } from '../../../../diagram';
 import { DialogRender } from '../../../../dialog/DialogRender';
 
@@ -20,17 +20,20 @@ export class ApiElement implements DiagramElementType<ApiProps> {
 
   constructor(public readonly render: DialogRender) {}
 
-  async open(props: ApiProps, node: DiagramNode): Promise<void> {
-    await this.render.showEdit({
-      id: node.id,
+  async open(props: ApiProps, node: DiagramNode, diagram: RealtimeDiagram): Promise<void> {
+    const data = await this.render.showEdit({
       value: props,
       title: node.name || node.id,
       errors: node.errors,
       warns: node.warns,
       definition: this.definition(),
     });
+    if (data.accepted) {
+      console.log(data.title);
+      diagram.update(node.id, data.title, data.data);
+    }
   }
- 
+
   definition() {
     return {
       schema: {

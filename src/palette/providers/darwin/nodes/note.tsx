@@ -1,7 +1,7 @@
 import ReactMarkdown from 'react-markdown';
 import { StickyNote, Palette, FilePlus2, Eraser } from 'lucide-react';
 import type { DiagramElementType, NodeActionItem } from '../../../DiagramElementType';
-import { DiagramModel, DiagramNode } from '../../../../diagram';
+import { DiagramModel, DiagramNode, RealtimeDiagram } from '../../../../diagram';
 import { ReactNode } from 'react';
 import { DialogRender } from '../../../../dialog/DialogRender';
 
@@ -26,15 +26,18 @@ export class NoteElement implements DiagramElementType<NoteProps> {
 
   constructor(public readonly render: DialogRender) {}
 
-  async open(props: NoteProps, node: DiagramNode): Promise<void> {
-    await this.render.showEdit({
-      id: node.id,
+  async open(props: NoteProps, node: DiagramNode, diagram: RealtimeDiagram): Promise<void> {
+    const data = await this.render.showEdit({
       value: props,
       title: node.name || node.id,
       errors: node.errors,
       warns: node.warns,
       definition: this.definition(),
     });
+    if (data.accepted) {
+      console.log(data.title);
+      diagram.update(node.id, data.title, data.data);
+    }
   }
 
   definition() {

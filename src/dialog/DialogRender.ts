@@ -1,4 +1,4 @@
-import { DiagramRender, FormDetail, FormResult, ReportResult } from '../diagram/render';
+import { DiagramRender, FormDetail, FormResult, ReportResult } from './model';
 import { getDiagramRender } from './dialogGateway';
 
 export class DialogRender implements DiagramRender {

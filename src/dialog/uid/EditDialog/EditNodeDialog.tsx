@@ -3,7 +3,7 @@ import { SchemaForm } from '../../../metadata/ui';
 import { MoreHorizontal } from 'lucide-react';
 import { FormDefinition } from '../../../metadata/FormDefinition';
 import type { NodeActionItem } from '../../../palette/DiagramElementType';
-import { FormDetail } from '../../render';
+import { FormDetail } from '../../../dialog/model';
 
 export default function EditNodeDialog({
   open,
