@@ -239,6 +239,7 @@ export default function EditNodeDialog({
             Nombre
           </label>
           <input
+            disabled={readOnly}
             id="node-name"
             value={name}
             onChange={(e) => setName(e.target.value)}
