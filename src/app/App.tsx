@@ -6,7 +6,7 @@ import type { DiagramModel, EditorMode } from '../diagram';
 
 import { ErrorBanner, LoadingOverlay } from './ui';
 
-import TopToolbar from '../diagram/ui/TopToolbar/TopToolbar';
+import TopToolbar from '../toolbar/ui/TopToolbar/TopToolbar';
 import { PaletteDrawer, ActionPalette } from '../palette/ui';
 
 // ⚙️ Estilos globales básicos (reset, variables, modales, overlay, etc.)

@@ -1,11 +1,11 @@
 import React from 'react';
 import './TopToolbar.scss';
 import { RepositoryManager } from '../../../storage/ui';
-import type { DiagramModel, EditorMode } from '../..';
 import { AppContext } from '../../../app/AppContext';
 import { FileStorage, Repository } from '../../../storage/Repository';
 import { useUrlBind } from '../../../app/url/useUrlBind';
 import { useUrlOnLoad } from '../../../app/url/useUrlOnLoad';
+import { DiagramModel, EditorMode } from '../../../diagram';
 
 type Props = {
   onLoadDiagram(json?: DiagramModel, token?: () => void): void;
