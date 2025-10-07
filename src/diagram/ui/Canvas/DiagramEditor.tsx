@@ -45,7 +45,6 @@ import GenericNode from './GenericNode';
 import { useNestValidation } from './hooks/useNestValidation';
 import { AppContext } from '../../../app/AppContext';
 import { findNodeType } from '../../../palette';
-import { upsertEdges, upsertNodes } from './NodesMerger';
 
 const NODE_TYPES_STABLE = {
   c4: GenericNode,

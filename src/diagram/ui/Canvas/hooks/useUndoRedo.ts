@@ -31,7 +31,6 @@ export function useUndoRedo(
     limit = 100,
     resizableTypes = [],
     trackResize = 'end',
-    resizeDebounceMs = 80,
     groupWithinMs = 150,                  // << recomendado 120–200ms
   } = opts;
 
@@ -196,7 +195,7 @@ export function useUndoRedo(
   function mergeNodeChanges(changes: NodeChange[]): NodeChange[] {
     const lastByKey = new Map<string, NodeChange>();
     const lastSelectById = new Map<string, NodeChange>();
-    const key = (c: NodeChange) => `${c.type}:${c.id ?? '_'}`;
+    const key = (c: NodeChange) => `${c.type}:${(c as any).id ?? '_'}`;
 
     for (const c of changes) {
       if (c.type === 'select') { if (c.id) lastSelectById.set(c.id, c); continue; }
@@ -213,7 +212,7 @@ export function useUndoRedo(
 
     // filtra selects que no cambian el estado final
     const effectiveSelects = Array.from(lastSelectById.values()).filter(sel => {
-      const id = sel.id!;
+      const id = (sel as any).id!;
       const next = (sel as any).selected as boolean;
       const prev = selectedIdsRef.current.has(id);
       return next !== prev;
