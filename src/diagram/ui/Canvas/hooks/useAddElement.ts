@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type { XYPosition } from 'reactflow';
+import type { Node, XYPosition } from 'reactflow';
 import type { DiagramNode } from '../../..';
 import { findNodeType, PaletteInterface } from '../../../../palette';
 
@@ -19,7 +19,7 @@ export function useAddElement(
   helpers: Helpers,
 ) {
   return React.useCallback(
-    (kind: DiagramNode['kind'], opts?: AddOptions): string => {
+    (kind: DiagramNode['kind'], opts?: AddOptions): Node => {
       const t = findNodeType(kind, palette?.nodes)!;
       const id = uid();
       const defProps = t.defaultProps() as any;
@@ -32,8 +32,7 @@ export function useAddElement(
       const dy = opts?.offset?.dy ?? 12;
       const position = { x: panePos.x + dx, y: panePos.y + dy };
 
-      setNodes((ns: any[]) =>
-        ns.concat({
+      const newNode = {
           id,
           position,
           data: {
@@ -45,10 +44,12 @@ export function useAddElement(
           type: 'c4',
           style: { width: baseSize.width, height: baseSize.height, zIndex },
           zIndex,
-        }),
+        };
+      setNodes((ns: any[]) =>
+        ns.concat(newNode),
       );
 
-      return id;
+      return newNode;
     },
     [setNodes, helpers],
   );

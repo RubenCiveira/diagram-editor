@@ -1,11 +1,12 @@
 import { Cog } from 'lucide-react';
-import type { DiagramElementType, NodeActionItem } from '../../../DiagramElementType';
+import type { DiagramElementType } from '../../../DiagramElementType';
 import type { DiagramNode, ElementKind, RealtimeDiagram } from '../../../../diagram';
 import { CheckPending } from '../contextuals/CheckPending';
 import { Merge } from '../contextuals/Merge';
 import { Deploy } from '../contextuals/Deploy';
 import { DeployConfig } from '../contextuals/DeployConfig';
 import { DialogRender } from '../../../../dialog/DialogRender';
+import { NodeActionItem } from '../../../../metadata/FormDefinition';
 
 export type MicroserviceProps = {
   tech: 'quarkus' | 'spring' | 'php-slim' | 'node';

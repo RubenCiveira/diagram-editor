@@ -1,9 +1,10 @@
 import ReactMarkdown from 'react-markdown';
 import { StickyNote, Palette, FilePlus2, Eraser } from 'lucide-react';
-import type { DiagramElementType, NodeActionItem } from '../../../DiagramElementType';
+import type { DiagramElementType } from '../../../DiagramElementType';
 import { DiagramModel, DiagramNode, RealtimeDiagram } from '../../../../diagram';
 import { ReactNode } from 'react';
 import { DialogRender } from '../../../../dialog/DialogRender';
+import { NodeActionItem } from '../../../../metadata/FormDefinition';
 
 export type NoteProps = {
   text: string;

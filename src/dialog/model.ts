@@ -1,10 +1,16 @@
-import { FormDefinition } from '../metadata/FormDefinition';
-import { NodeActionItem } from '../palette/DiagramElementType';
+import { FormDefinition, NodeActionItem } from '../metadata/FormDefinition';
 
 export type FormResult<T> = {
   data: T;
   title: string;
   accepted: boolean;
+}
+
+export type ReportDetails = {
+  html: string;
+  title?: string;
+  menu?: Promise<NodeActionItem[]> | NodeActionItem[];
+  actions?: Promise<NodeActionItem[]> | NodeActionItem[];
 }
 
 export type ReportResult = {
@@ -23,6 +29,6 @@ export type FormDetail<T> = {
 };
 
 export interface DiagramRender {
-  showReport(html: string): Promise<ReportResult>;
+  showReport(details: ReportDetails): Promise<ReportResult>;
   showEdit<T>(props: FormDetail<T>): Promise<FormResult<T>>;
 }

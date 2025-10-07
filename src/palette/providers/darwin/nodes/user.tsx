@@ -12,9 +12,8 @@ export class DarwinUser implements DiagramElementType<UserProps> {
   kind: ElementKind = 'darwin-user';
   title = 'Usuario';
   paletteIcon = (<User size={18} />);
-  
-  constructor(public readonly render: DialogRender) {
-  }
+
+  constructor(public readonly render: DialogRender) {}
 
   async open(props: UserProps, node: DiagramNode, diagram: RealtimeDiagram): Promise<void> {
     const data = await this.render.showEdit({
@@ -24,26 +23,50 @@ export class DarwinUser implements DiagramElementType<UserProps> {
       warns: node.warns,
       definition: this.definition(),
     });
-    if( data.accepted ) {
-      console.log( data.title );
-      diagram.update(node.id, data.title, data.data );
+    if (data.accepted) {
+      diagram.update(node.id, data.title, data.data);
     }
   }
 
   definition() {
     return {
-      schema: {
-        type: 'object',
-        title: 'Usuario',
-        properties: {
-          category: {
-            type: 'string',
-            title: 'Tipo',
-            enum: ['Empleado', 'Cliente', 'Publico', 'Operador'],
+      schema: [
+        {
+          title: 'One',
+          icon: 'fa fa-user',
+          schema: {
+            type: 'object',
+            title: 'Usuario',
+            properties: {
+              category: {
+                type: 'string',
+                title: 'Tipo',
+                enum: ['Empleado', 'Cliente', 'Publico', 'Operador'],
+              },
+            },
+            required: ['category'],
           },
         },
-        required: ['category'],
-      },
+        {
+          title: 'Two',
+          icon: 'fa fa-gear',
+          schema: {
+            type: 'object',
+            title: 'Usuario',
+            properties: {
+              level: {
+                type: 'string',
+                title: 'Tipo',
+              },
+              mark: {
+                type: 'string',
+                title: 'Mark',
+              },
+            },
+            required: ['level'],
+          },
+        }
+      ],
     };
   }
 
@@ -93,5 +116,4 @@ export class DarwinUser implements DiagramElementType<UserProps> {
     ${body}
   </div>`.trim();
   }
-
 }

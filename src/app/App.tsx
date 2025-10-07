@@ -20,7 +20,7 @@ import { FEATURE_FLAGS } from './FeatureFlags';
 import { AppwriteProvider } from '../storage/providers/appwrite/AppwriteProvider';
 import { useEditDialog } from '../diagram/ui/Canvas/hooks/useEditDialog';
 import { useReportDialog } from '../diagram/ui/Canvas/hooks/useReportDialog';
-import { ReportResult, FormDetail, DiagramRender } from '../dialog/model';
+import { ReportResult, ReportDetails, FormDetail, DiagramRender } from '../dialog/model';
 import { attachDiagramRender } from '../dialog/dialogGateway';
 import EditNodeDialog from '../dialog/uid/EditDialog/EditNodeDialog';
 import ReportDialog from '../dialog/uid/ReportDialog/ReportDialog';
@@ -59,7 +59,7 @@ export default function App() {
     async showEdit(props: FormDetail<any>): Promise<any> {
       return openEdit(props);
     },
-    async showReport(html: string): Promise<ReportResult> {
+    async showReport(html: ReportDetails): Promise<ReportResult> {
       return openReport(html);
     },
   };
@@ -316,7 +316,7 @@ export default function App() {
         />
 
         {/* Report dialog */}
-        <ReportDialog open={openedReport} html={reportContent ?? null} onClose={onCloseReport} />
+        <ReportDialog open={openedReport} details={reportContent ?? null} onClose={onCloseReport} />
       </UrlStateProvider>
     </BrowserRouter>
   );

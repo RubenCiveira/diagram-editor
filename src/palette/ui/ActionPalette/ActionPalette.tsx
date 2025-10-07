@@ -139,7 +139,6 @@ export default function ActionPalette({
       await item.exec( new DiagramDescriptor(graph, () => Promise.resolve(node.dataUrl), appContext.palette?.nodes || [] ));
       setGraph({ ...graph });
       onClose();
-      console.log("ON CLOSE");
     } catch (e: any) {
       console.error( e );
       setError(e?.message ?? String(e));

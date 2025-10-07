@@ -4,16 +4,6 @@ import type { ElementKind } from '../diagram';
 
 export type NodeActionContext = {};
 
-export interface NodeActionItem {
-  readonly disabled?: boolean;
-  readonly title?: string;
-  readonly label?: string;
-  readonly icon?: ReactNode;
-  readonly danger?: boolean;
-
-  onClick(): Promise<void> | void;
-}
-
 export type NodeCategory = 'actor' | 'component' | 'note';
 
 export type ConnectCheckResult = { ok: true } | { ok: false; reason: string };

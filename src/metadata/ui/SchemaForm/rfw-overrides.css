@@ -1,0 +1,6 @@
+.react-form-wizard .mui-scope,
+.react-form-wizard .mui-scope *,
+.react-form-wizard .mui-scope *::before,
+.react-form-wizard .mui-scope *::after {
+  box-sizing: content-box !important; /* vuelve al baseline de MUI */
+}

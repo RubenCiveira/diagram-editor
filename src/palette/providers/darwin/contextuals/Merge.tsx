@@ -1,5 +1,5 @@
 import { GitPullRequest } from 'lucide-react';
-import { NodeActionItem } from '../../../DiagramElementType';
+import { NodeActionItem } from '../../../../metadata/FormDefinition';
 
 export class Merge implements NodeActionItem {
   public readonly title = 'Merge feature';

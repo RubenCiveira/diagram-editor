@@ -1,5 +1,5 @@
 import { HardDriveUpload } from 'lucide-react';
-import { NodeActionItem } from '../../../DiagramElementType';
+import { NodeActionItem } from '../../../../metadata/FormDefinition';
 
 export class Deploy implements NodeActionItem {
   public readonly title = 'Deploy micro';

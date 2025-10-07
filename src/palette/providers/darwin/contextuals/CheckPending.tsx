@@ -1,5 +1,5 @@
 import { GitCompareArrows } from 'lucide-react';
-import { NodeActionItem } from '../../../DiagramElementType';
+import { NodeActionItem } from '../../../../metadata/FormDefinition';
 
 export class CheckPending implements NodeActionItem {
   public readonly title = 'Check pending';

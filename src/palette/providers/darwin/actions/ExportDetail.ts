@@ -1,8 +1,12 @@
-import { FormDefinition } from '../../../../metadata/FormDefinition';
+import { FormDefinition, NodeActionItem } from '../../../../metadata/FormDefinition';
 import { ActionItem } from '../../../ActionItem';
 import { DiagramDescriptor } from '../../../../diagram/descriptor';
 import { DialogRender } from '../../../../dialog/DialogRender';
 import { BuildDiagramReport } from './BuildDiagramReport';
+import { CheckPending } from '../contextuals/CheckPending';
+import { Deploy } from '../contextuals/Deploy';
+import { DeployConfig } from '../contextuals/DeployConfig';
+import { Merge } from '../contextuals/Merge';
 
 export class ExportDetails implements ActionItem {
   id = 'export-html';
@@ -20,7 +24,11 @@ export class ExportDetails implements ActionItem {
       const builder = new BuildDiagramReport(graph);
       const svg = await graph.toSvg();
       const html = builder.buildDiagramHTML(ensureSvgSrc(svg));
-      this.render.showReport( html );
+      this.render.showReport({
+        html: html,
+        menu: this.getMoreMenuActions(),
+        actions: this.getHeaderActions()
+      });
     }
   }
 
@@ -37,25 +45,17 @@ export class ExportDetails implements ActionItem {
     };
   }
 
-  // async run(doc, _data, svg) => {
-  //   // const builder = new BuildDiagramReport(extractor);
-  //   const builder = new BuildDiagramReport(new DiagramDescriptor(doc, DARWIN_NODES));
-  //   const html = builder.buildDiagramHTML(ensureSvgSrc(svg));
-  //   //     const svgSrc = ensureSvgSrc(svg);
-  //   //     const html = `<!doctype html>
-  //   // <html>
-  //   // <head><meta charset="utf-8"><title>Reporte</title>
-  //   // <style>body{margin:0;padding:24px;font:14px system-ui,sans-serif}</style></head>
-  //   // <body>
-  //   //   <h1>Aqui ${data.text}</h1>
-  //   //   <img src="${svgSrc}" alt="Diagrama" style="max-width:100%;height:auto;display:block;margin:auto" />
-  //   // </body>
-  //   // </html>`;
-  //   // doc.nodes.forEach(node => {
-  //   //   node.errors = ['FALLO'];
-  //   // });
-  //   return { content: html };
-  // }
+  getHeaderActions(): NodeActionItem[] {
+    return [new CheckPending({ url: '', disabled: false })];
+  }
+
+  getMoreMenuActions(): NodeActionItem[] {
+    return [
+      new Merge({ url: '', disabled: false }),
+      new Deploy({ url: '', disabled: false }),
+      new DeployConfig({ url: '', disabled: false }),
+    ];
+  }
 }
 
 function ensureSvgSrc(svgOrDataUrl: string) {

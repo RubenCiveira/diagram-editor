@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { SchemaForm } from '../../../metadata/ui';
 import { MoreHorizontal } from 'lucide-react';
-import { FormDefinition } from '../../../metadata/FormDefinition';
-import type { NodeActionItem } from '../../../palette/DiagramElementType';
+import { FormDefinition, NodeActionItem } from '../../../metadata/FormDefinition';
 import { FormDetail } from '../../../dialog/model';
+import type { RJSFSchema, UiSchema } from '@rjsf/utils';
+import { SchemaFormRef, SchemaFormState } from '../../../metadata/ui/SchemaForm/SchemaForm';
 
 export default function EditNodeDialog({
   open,
@@ -19,7 +20,8 @@ export default function EditNodeDialog({
   onSave: (updated: { name: string; props: Record<string, any> }) => void;
 }) {
   // ---- State & refs (siempre al principio, sin condicionales) ----
-  const [name, setName] = React.useState<string>('');
+  const [title, setTitle] = React.useState<string>('');
+  const [isWizzard, setIsWizzard] = React.useState(false);
   const [definition, setDefinition] = React.useState<FormDefinition | null>(null);
   const [_isLoading, setIsLoading] = React.useState(false);
   const [_error, setError] = React.useState<string | null>(null);
@@ -27,6 +29,21 @@ export default function EditNodeDialog({
   const [propsData, setPropsData] = React.useState<Record<string, any>>({});
   const [menuOpen, setMenuOpen] = React.useState(false);
   const menuRef = React.useRef<HTMLDivElement | null>(null);
+
+  const formRef = useRef<SchemaFormRef>(null);
+
+  const setFormRef = useCallback((inst: SchemaFormRef | null) => {
+    formRef.current = inst;
+  }, []);
+
+  const [formState, setFormState] = useState<SchemaFormState>();
+
+  const updateState = useCallback(
+    (inst: SchemaFormState) => {
+      setFormState(inst);
+    },
+    [formState, setFormState],
+  );
 
   React.useEffect(() => {
     const loadDefinition = async () => {
@@ -49,12 +66,15 @@ export default function EditNodeDialog({
         setIsLoading(false);
       }
     };
-
     loadDefinition();
   }, [typeDef]);
 
   React.useEffect(() => {
-    setName(typeDef?.title ?? '');
+    setIsWizzard( !!Array.isArray(definition?.schema) );
+  }, [definition]);
+
+  React.useEffect(() => {
+    setTitle(typeDef?.title ?? '');
     setPropsData(typeDef?.value);
     setMenuOpen(false);
   }, [open]);
@@ -72,11 +92,11 @@ export default function EditNodeDialog({
   // ---- Hooks MEMO/CALLBACK (definidos SIEMPRE, sin condicionales) ----
   const performSave = React.useCallback(
     (patch?: Partial<{ name: string; props: Record<string, any> }>) => {
-      const finalName = patch?.name ?? name;
+      const finalName = patch?.name ?? title;
       const finalProps = patch?.props ?? propsData;
       onSave({ name: finalName, props: finalProps });
     },
-    [name, propsData, onSave],
+    [title, propsData, onSave],
   );
 
   const [headerActions, setHeaderActions] = React.useState<NodeActionItem[]>([]);
@@ -119,6 +139,16 @@ export default function EditNodeDialog({
 
   // ---- Salida condicional (DESPUÉS de declarar todos los hooks) ----
   if (!open || !typeDef) return null;
+
+  const titleShema: RJSFSchema = {
+    type: 'object',
+    // $defs al nivel raíz para mantener rutas #/$defs/*
+    properties: {
+      title: { type: 'string', title: 'Title', description: '/users' },
+    },
+    required: ['title'],
+  };
+  const titleUi: UiSchema = {};
 
   // ---- Render del diálogo ----
   return (
@@ -233,37 +263,46 @@ export default function EditNodeDialog({
         )}
 
         {/* Campo "Nombre" */}
-        { typeDef?.title !== undefined && 
-        <div style={{ marginBottom: 12 }}>
-          <label htmlFor="node-name" style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>
-            Nombre
-          </label>
-          <input
+        {typeDef?.title !== undefined && (
+          <SchemaForm
+            schema={titleShema}
+            uiSchema={titleUi}
+            formData={{ title: title }}
+            onChange={(d) => setTitle(d.title) }
+            onSubmit={() => handleSubmit()}
             disabled={readOnly}
-            id="node-name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Nombre del elemento"
-            style={{ width: '100%', padding: 8, borderRadius: 8, border: '1px solid #e5e7eb' }}
+            liveValidate={true}
           />
-        </div> }
+        )}
 
         {/* Formulario JSON Schema */}
         {definition && (
           <SchemaForm
+            ref={setFormRef}
             schema={definition.schema}
             uiSchema={definition.ui}
             formData={propsData}
+            onUpdate={updateState}
             onChange={(d) => setPropsData(d)}
             disabled={readOnly}
             onSubmit={() => handleSubmit()}
-            liveValidate={false}
+            liveValidate={true}
           />
         )}
 
         <div className="modal-footer">
           <button onClick={onCancel}>Cancelar</button>
-          <button className="primary" onClick={handleSubmit} disabled={readOnly}>
+          {isWizzard && (
+            <>
+              <button disabled={!formState?.hasPrev || !formState?.canAccept} onClick={formRef.current?.prev}>
+                Prev
+              </button>
+              <button disabled={!formState?.hasNext || !formState?.canAccept} onClick={formRef.current?.next}>
+                Next
+              </button>
+            </>
+          )}
+          <button className="primary" disabled={readOnly || !formState?.canSave} onClick={handleSubmit}>
             Guardar
           </button>
         </div>

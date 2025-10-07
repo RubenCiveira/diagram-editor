@@ -18,7 +18,14 @@ import 'reactflow/dist/style.css';
 import './DiagramEditor.scss';
 import { Plus, Download } from 'lucide-react';
 
-import type { DiagramModel, DiagramNode as DiagramNodeData, DiagramView, EditorMode } from '../..';
+import {
+  DiagramNode,
+  RealtimeDiagram,
+  type DiagramModel,
+  type DiagramNode as DiagramNodeData,
+  type DiagramView,
+  type EditorMode,
+} from '../..';
 
 import { useReactFlowFit } from './hooks/useReactFlowFit';
 import { useHydrateFromJSON } from './hooks/useHydrateFromJSON';
@@ -37,6 +44,8 @@ import GenericEdge from './GenericEdge';
 import GenericNode from './GenericNode';
 import { useNestValidation } from './hooks/useNestValidation';
 import { AppContext } from '../../../app/AppContext';
+import { findNodeType } from '../../../palette';
+import { upsertEdges, upsertNodes } from './NodesMerger';
 
 const NODE_TYPES_STABLE = {
   c4: GenericNode,
@@ -132,6 +141,7 @@ function DiagramEditorImpl(
 
   const [allNodes, setAllNodes] = React.useState<any[]>([]);
   const [allEdges, setAllEdges] = React.useState<any[]>([]);
+
   const [hiddenNodes, setHiddenNodes] = React.useState<string[]>([]);
   const [views, setViews] = React.useState<DiagramView[]>(() => initialDiagram?.views ?? []);
   const [currentViewId, setCurrentViewId] = React.useState<string>('');
@@ -140,19 +150,26 @@ function DiagramEditorImpl(
 
   const context = React.useContext(AppContext);
 
-
   React.useEffect(() => {
     const isDesign = mode === 'design' && currentViewId === '';
     const canConnect = mode === 'design' && currentViewId === '';
+
     setNodes(
-      allNodes.map((e) => ({
-        ...e,
-        hidden: hiddenNodes.includes(e.id),
-        draggable: isDesign,
-        selectable: true,
-        connectable: canConnect,
-        data: { ...e.data, uiMode: mode },
-      })),
+      allNodes.map((e) => {
+        // console.log("EVERY ", selectedIds );
+        // if( selectedIds.includes(e.id) ) {
+        //   console.log("WITH INCLUSION");
+        // }
+        return {
+          ...e,
+          hidden: hiddenNodes.includes(e.id),
+          draggable: isDesign,
+          connectable: canConnect,
+          // selectable: true,
+          // selected: selectedIds.includes(e.id),
+          data: { ...e.data, uiMode: mode },
+        };
+      }),
     );
     setEdges(allEdges.map((e) => ({ ...e, hidden: hiddenNodes.includes(e.source) || hiddenNodes.includes(e.target) })));
   }, [allNodes, allEdges, hiddenNodes, mode, currentViewId]);
@@ -202,7 +219,7 @@ function DiagramEditorImpl(
   const createdAtRef = React.useRef<string | undefined>(undefined);
   const readOnly = mode === 'readonly';
   const isDesign = mode === 'design' && currentViewId === '';
-  
+
   const { commit, undo, redo, onNodesChangeWithHistory, onEdgesChangeWithHistory } = useUndoRedo(
     nodes as any[],
     setAllNodes as any,
@@ -309,6 +326,7 @@ function DiagramEditorImpl(
   React.useEffect(() => {
     const isDesign = mode === 'design' && currentViewId === '';
     const canConnect = mode === 'design' && currentViewId === '';
+    console.log('set nodes v2');
     setNodes((nds) =>
       nds.map((n) => ({
         ...n,
@@ -352,7 +370,8 @@ function DiagramEditorImpl(
           return '';
         }
       }
-      const newId = addElement(kind);
+      const newNode = addElement(kind);
+      const newId = newNode.id;
       if (pendingFrom) {
         const { sourceId, from } = pendingFrom;
         const src = (nodes as any[]).find((n) => n.id === sourceId) as Node | undefined;
@@ -388,6 +407,12 @@ function DiagramEditorImpl(
         setPendingFrom(null);
       }
 
+      const nodeType = findNodeType(kind, context.palette?.nodes);
+      if (nodeType) {
+        nodeType.open(newNode.data.props, newNode.data as DiagramNode, new RealtimeDiagram(setNodes!));
+      } else {
+        console.error('No info for type of the data');
+      }
       return newId;
     },
     [addElement, pendingFrom, nodes, setNodes],

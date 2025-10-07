@@ -1,5 +1,5 @@
 import { ServerCog } from 'lucide-react';
-import { NodeActionItem } from '../../../DiagramElementType';
+import { NodeActionItem } from '../../../../metadata/FormDefinition';
 
 export class DeployConfig implements NodeActionItem {
   public readonly title = 'Deploy conf';
