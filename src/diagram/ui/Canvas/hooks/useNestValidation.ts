@@ -15,8 +15,8 @@ export function useNestValidation(nodes: any[], palette: PaletteInterface | unde
 
       if (!src || !tgt) return { ok: false, reason: 'Nodo inexistente' };
 
-      const srcType = findNodeType(src.kind, palette?.nodes);
-      const tgtType = findNodeType(tgt.kind, palette?.nodes);
+      const srcType = findNodeType(src.kind, palette);
+      const tgtType = findNodeType(tgt.kind, palette);
       if (!srcType || !tgtType) return { ok: false, reason: 'Tipo de nodo desconocido' };
 
       const sOut = srcType.acceptsChilds?.() ?? true;

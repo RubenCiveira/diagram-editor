@@ -24,7 +24,6 @@ export class DatabaseElement implements DiagramElementType<DatabaseProps> {
       definition: this.definition(),
     });
     if (data.accepted) {
-      console.log(data.title);
       diagram.update(node.id, data.title, data.data);
     }
   }

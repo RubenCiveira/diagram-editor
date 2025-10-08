@@ -104,7 +104,7 @@ export const ZDiagramNode = z.object({
   kind: z.string(),
   name: z.string().optional(),
   props: z.record(z.any()).optional(),
-  position: ZPoint,
+  position: ZPoint.optional(),
   width: z.number().positive().optional(),
   height: z.number().positive().optional(),
 });

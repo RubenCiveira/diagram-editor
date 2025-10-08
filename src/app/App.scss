@@ -48,6 +48,9 @@ body {
   justify-content: center;
   z-index: 350;
 }
+.main-container {
+  position: relative;
+}
 .modal {
   width: min(720px, 92vw);
   max-height: 82vh;

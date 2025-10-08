@@ -4,7 +4,7 @@
 **Licencia:** Apache 2.0  
 **Repositorio:** [https://github.com/RubenCiveira/diagram-editor](https://github.com/RubenCiveira/diagram-editor)
 
-Editor visual de diagramas C4 de componentes construido con React Flow. Permite crear, editar y gestionar diagramas arquitectónicos con persistencia en GitHub, formularios dinámicos basados en JSON Schema y una experiencia de usuario moderna e intuitiva.
+Editor visual de diagramas de componentes construido con React Flow. Permite crear, editar y gestionar diagramas arquitectónicos con persistencia en GitHub, formularios dinámicos basados en JSON Schema y una experiencia de usuario moderna e intuitiva.
 
 ## ✨ Características Principales
 

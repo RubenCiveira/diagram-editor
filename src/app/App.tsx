@@ -13,7 +13,7 @@ import { PaletteDrawer, ActionPalette } from '../palette/ui';
 import { AppContext, AppContextValue } from './AppContext';
 import { FileStorage } from '../storage/Repository';
 
-import { DARWIN_PALETTE } from '../palette/providers/darwin';
+import { ModularAppPalette } from '../palette/providers/modular-app';
 import { LocalStorage } from '../storage/providers/local/LocalProvider';
 import { UrlStateProvider } from './url/UrlStateProvider';
 import { FEATURE_FLAGS } from './FeatureFlags';
@@ -38,7 +38,7 @@ export default function App() {
   }
 
   const context = {
-    palette: DARWIN_PALETTE,
+    palette: ModularAppPalette,
     repository: repository,
     currentFile: fileRef.current,
   } as AppContextValue;
@@ -262,7 +262,7 @@ export default function App() {
       </div>
 
       {/* Editor */}
-      <main className="diagram-container">
+      <main className="main-container">
         <DiagramEditor
           key={diagramKey}
           ref={editorRef}

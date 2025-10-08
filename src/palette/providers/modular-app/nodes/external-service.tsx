@@ -3,21 +3,21 @@ import { DiagramNode, ElementKind, RealtimeDiagram } from '../../../../diagram';
 import { DiagramElementType } from '../../../DiagramElementType';
 import { DialogRender } from '../../../../dialog/DialogRender';
 
-export type ExternalSoapProps = {
+export type ExternalServiceProps = {
   serviceType: 'db' | 'microservice' | 'elk' | 'trx' | 'oauth' | 'queue' | 'cache' | 'storage';
   name?: string;
   endpoint?: string;
   notes?: string;
 };
 
-export class ExternalSoapElement implements DiagramElementType<ExternalSoapProps> {
-  kind: ElementKind = 'externalSoap';
-  title = 'Web service';
+export class ExternalServiceElement implements DiagramElementType<ExternalServiceProps> {
+  kind: ElementKind = 'externalService';
+  title = 'Servicio REST';
   paletteIcon = (<ExternalLink size={18} />);
 
   constructor(public readonly render: DialogRender) {}
 
-  async open(props: ExternalSoapProps, node: DiagramNode, diagram: RealtimeDiagram): Promise<void> {
+  async open(props: ExternalServiceProps, node: DiagramNode, diagram: RealtimeDiagram): Promise<void> {
     const data = await this.render.showEdit({
       value: props,
       title: node.name || node.id,
@@ -26,7 +26,6 @@ export class ExternalSoapElement implements DiagramElementType<ExternalSoapProps
       definition: this.definition(),
     });
     if (data.accepted) {
-      console.log(data.title);
       diagram.update(node.id, data.title, data.data);
     }
   }
@@ -35,7 +34,7 @@ export class ExternalSoapElement implements DiagramElementType<ExternalSoapProps
     return {
       schema: {
         type: 'object',
-        title: 'Web service',
+        title: 'Servicio REST',
         properties: {
           serviceType: {
             type: 'string',
@@ -67,14 +66,14 @@ export class ExternalSoapElement implements DiagramElementType<ExternalSoapProps
     return false;
   }
 
-  defaultProps(): ExternalSoapProps {
+  defaultProps(): ExternalServiceProps {
     return {
       serviceType: 'db',
       name: 'PostgreSQL',
       endpoint: 'postgres://host:5432/db',
     };
   }
-  label({ name, props }: { name?: string; props: ExternalSoapProps }) {
+  label({ name, props }: { name?: string; props: ExternalServiceProps }) {
     const n = name ?? props.name ?? 'externo';
     return `${n} (${props.serviceType})`;
   }

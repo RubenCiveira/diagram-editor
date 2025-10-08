@@ -55,7 +55,7 @@ function toReactFlowAppendables(
   const idMap = new Map<string, string>();
 
   const rfNodes = doc.nodes.map((n, idx) => {
-    const def = findNodeType(n.kind, palette?.nodes);
+    const def = findNodeType(n.kind, palette);
     const size = def?.nodeSize ? def.nodeSize({ props: (n as any).props ?? {} }) : undefined;
     const isBg = !!def?.isBackground?.();
 

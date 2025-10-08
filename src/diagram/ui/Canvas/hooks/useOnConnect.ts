@@ -52,8 +52,8 @@ export function useOnConnect(
           return;
         }
 
-        const srcType = findNodeType(src.kind!, palette?.nodes);
-        const tgtType = findNodeType(tgt.kind!, palette?.nodes);
+        const srcType = findNodeType(src.kind!, palette);
+        const tgtType = findNodeType(tgt.kind!, palette);
 
         const srcAllowsChildren = srcType?.acceptsChilds?.() ?? false;
         const tgtAllowsParent = tgtType?.acceptsParents?.() ?? false;

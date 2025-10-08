@@ -36,7 +36,6 @@ export class NoteElement implements DiagramElementType<NoteProps> {
       definition: this.definition(),
     });
     if (data.accepted) {
-      console.log(data.title);
       diagram.update(node.id, data.title, data.data);
     }
   }
@@ -105,8 +104,8 @@ export class NoteElement implements DiagramElementType<NoteProps> {
     return (
       <div
         style={{
-          width: '100%',
-          height: '100%',
+          position: 'absolute',
+          top: 0, left: 0, right:0, bottom: 0,
           borderRadius: 12,
           background: palette.bg,
           border: `1px solid ${palette.border}`,

@@ -18,7 +18,7 @@ const DEFAULT_SQUARE = { width: '96px', height: '96px' };
 export default function GenericNode({ data, selected }: NodeProps<DiagramNode>) {
   const context = React.useContext(AppContext);
   const { setNodes } = React.useContext(DiagramUIContext);
-  const typeDef = data?.kind ? findNodeType(data.kind, context?.palette?.nodes) : undefined;
+  const typeDef = data?.kind ? findNodeType(data.kind, context?.palette) : undefined;
   const props = (data as any).props ?? {};
   const label = typeDef ? typeDef.label({ name: data.name, props }) : (data.name ?? 'Elemento');
 
@@ -59,8 +59,8 @@ export default function GenericNode({ data, selected }: NodeProps<DiagramNode>) 
   const base = typeDef?.renderShape?.(props, conent) ?? (
     <div
       style={{
-        width: '100%',
-        height: '100%',
+        position: 'absolute',
+        top: 0, left: 0, right: 0, bottom: 0,
         borderRadius: 14,
         background: '#ffffff',
         display: 'flex',
@@ -113,8 +113,7 @@ export default function GenericNode({ data, selected }: NodeProps<DiagramNode>) 
           position: 'relative',
           width: baseSize.width,
           height: baseSize.height,
-          overflow: 'visible',
-          paddingBottom: 10,
+          overflow: 'visible'
         }}
       >
         <AddHandle id="out-new" node={node} />
@@ -125,19 +124,23 @@ export default function GenericNode({ data, selected }: NodeProps<DiagramNode>) 
         {shape}
       </div>
 
-      <div
-        style={{
-          marginTop: 12,
-          fontSize: 16,
-          lineHeight: 1.2,
-          width: baseSize.width,
-          textAlign: 'center',
-          color: 'rgb(65, 66, 68)',
-          wordBreak: 'break-word',
-        }}
-      >
-        {label}
-      </div>
+      {typeDef?.renderShape ? (
+        <></>
+      ) : (
+        <div
+          style={{
+            marginTop: 12,
+            fontSize: 16,
+            lineHeight: 1.2,
+            width: baseSize.width,
+            textAlign: 'center',
+            color: 'rgb(65, 66, 68)',
+            wordBreak: 'break-word',
+          }}
+        >
+          {label}
+        </div>
+      )}
     </div>
   );
 }

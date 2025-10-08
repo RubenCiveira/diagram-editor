@@ -16,7 +16,7 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import './DiagramEditor.scss';
-import { Plus, Download } from 'lucide-react';
+import { Plus, Download, StickyNote } from 'lucide-react';
 
 import {
   DiagramNode,
@@ -45,6 +45,7 @@ import GenericNode from './GenericNode';
 import { useNestValidation } from './hooks/useNestValidation';
 import { AppContext } from '../../../app/AppContext';
 import { findNodeType } from '../../../palette';
+import { useDeleteSelection } from './hooks/useDeleteSelection';
 
 const NODE_TYPES_STABLE = {
   c4: GenericNode,
@@ -183,6 +184,11 @@ function DiagramEditorImpl(
     [onInitFit],
   );
 
+  const addNote = React.useCallback(() => {
+    const element = context.palette?.note!;
+    handleAdd(element.kind);
+  }, []);
+
   const screenToFlowPosition = React.useCallback((client: { x: number; y: number }) => {
     const inst = rfRef.current as any;
     if (inst?.screenToFlowPosition) return inst.screenToFlowPosition(client);
@@ -275,6 +281,27 @@ function DiagramEditorImpl(
     return () => window.removeEventListener('keydown', onKey, { capture: true } as any);
   }, [undo, redo]);
 
+  const nodesRef = React.useRef<Node[]>([]);
+  const edgesRef = React.useRef<Edge[]>([]);
+  React.useEffect(() => {
+    nodesRef.current = nodes;
+  }, [nodes]);
+  React.useEffect(() => {
+    edgesRef.current = edges;
+  }, [edges]);
+
+  useDeleteSelection(
+    () => nodesRef.current,
+    setAllNodes,
+    () => edgesRef.current,
+    setAllEdges,
+    {
+      commit, // de tu hook de undo/redo
+      // cancelScheduledSnapshot, // si lo tienes
+      protectNode: (n) => n.type === 'note-bg', // ejemplo: no borrar backgrounds
+    },
+  );
+
   // ... dentro del componente DiagramEditor (después de definir refs/helpers y tener setNodes/setEdges) ...
   usePasteImport({
     palette: context?.palette,
@@ -325,7 +352,6 @@ function DiagramEditorImpl(
   React.useEffect(() => {
     const isDesign = mode === 'design' && currentViewId === '';
     const canConnect = mode === 'design' && currentViewId === '';
-    console.log('set nodes v2');
     setNodes((nds) =>
       nds.map((n) => ({
         ...n,
@@ -406,7 +432,7 @@ function DiagramEditorImpl(
         setPendingFrom(null);
       }
 
-      const nodeType = findNodeType(kind, context.palette?.nodes);
+      const nodeType = findNodeType(kind, context.palette);
       if (nodeType) {
         nodeType.open(newNode.data.props, newNode.data as DiagramNode, new RealtimeDiagram(setNodes!));
       } else {
@@ -521,15 +547,25 @@ function DiagramEditorImpl(
       />
 
       {/* Botones flotantes */}
-      {isDesign && (
+      {isDesign && (<>
         <button
           onClick={() => onOpenPalette?.()}
           aria-label="Añadir nodo"
           title="Añadir nodo"
           className="rf-floating-add"
-        >
+          >
           <Plus size={18} />
         </button>
+        { context.palette?.note &&
+        <button
+         onClick={() => addNote()}
+          aria-label="Añadir nodo"
+          title="Añadir nodo"
+          className="rf-floating-note"
+        >
+          <StickyNote size={18} />
+        </button> }
+        </>
       )}
 
       <button
@@ -569,6 +605,7 @@ function DiagramEditorImpl(
           edges={edges as any}
           minZoom={0.02}
           maxZoom={4}
+          deleteKeyCode={[]}
           onNodesChange={onNodesChangeWithHistory}
           onEdgesChange={onEdgesChangeWithHistory}
           onConnect={onConnect}
@@ -586,7 +623,11 @@ function DiagramEditorImpl(
             position="bottom-right"
             showInteractive={false}
             style={{ background: 'transparent', border: 'none', boxShadow: 'none', width: 'auto', padding: 0 }}
-          />
+          >
+            {/* <ControlButton onClick={() => alert('Something magical just happened. ✨')}>
+              <Hand />
+            </ControlButton> */}
+          </Controls>
           <Background gap={16} />
         </ReactFlow>
       </DiagramUIContext.Provider>

@@ -8,8 +8,8 @@ export type UserProps = {
   category: 'Empleado' | 'Cliente' | 'Publico' | 'Operador';
 };
 
-export class DarwinUser implements DiagramElementType<UserProps> {
-  kind: ElementKind = 'darwin-user';
+export class ActorUser implements DiagramElementType<UserProps> {
+  kind: ElementKind = 'actor-user';
   title = 'Usuario';
   paletteIcon = (<User size={18} />);
 

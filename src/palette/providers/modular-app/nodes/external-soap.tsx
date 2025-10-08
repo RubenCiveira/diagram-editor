@@ -3,21 +3,21 @@ import { DiagramNode, ElementKind, RealtimeDiagram } from '../../../../diagram';
 import { DiagramElementType } from '../../../DiagramElementType';
 import { DialogRender } from '../../../../dialog/DialogRender';
 
-export type ExternalTransactionProps = {
+export type ExternalSoapProps = {
   serviceType: 'db' | 'microservice' | 'elk' | 'trx' | 'oauth' | 'queue' | 'cache' | 'storage';
   name?: string;
   endpoint?: string;
   notes?: string;
 };
 
-export class ExternalTransactionElement implements DiagramElementType<ExternalTransactionProps> {
-  kind: ElementKind = 'externalTransaction';
-  title = 'Transactional';
+export class ExternalSoapElement implements DiagramElementType<ExternalSoapProps> {
+  kind: ElementKind = 'externalSoap';
+  title = 'Web service';
   paletteIcon = (<ExternalLink size={18} />);
 
   constructor(public readonly render: DialogRender) {}
 
-  async open(props: ExternalTransactionProps, node: DiagramNode, diagram: RealtimeDiagram): Promise<void> {
+  async open(props: ExternalSoapProps, node: DiagramNode, diagram: RealtimeDiagram): Promise<void> {
     const data = await this.render.showEdit({
       value: props,
       title: node.name || node.id,
@@ -26,7 +26,6 @@ export class ExternalTransactionElement implements DiagramElementType<ExternalTr
       definition: this.definition(),
     });
     if (data.accepted) {
-      console.log(data.title);
       diagram.update(node.id, data.title, data.data);
     }
   }
@@ -35,7 +34,7 @@ export class ExternalTransactionElement implements DiagramElementType<ExternalTr
     return {
       schema: {
         type: 'object',
-        title: 'Transactional',
+        title: 'Web service',
         properties: {
           serviceType: {
             type: 'string',
@@ -67,14 +66,14 @@ export class ExternalTransactionElement implements DiagramElementType<ExternalTr
     return false;
   }
 
-  defaultProps(): ExternalTransactionProps {
+  defaultProps(): ExternalSoapProps {
     return {
       serviceType: 'db',
       name: 'PostgreSQL',
       endpoint: 'postgres://host:5432/db',
     };
   }
-  label({ name, props }: { name?: string; props: ExternalTransactionProps }) {
+  label({ name, props }: { name?: string; props: ExternalSoapProps }) {
     const n = name ?? props.name ?? 'externo';
     return `${n} (${props.serviceType})`;
   }

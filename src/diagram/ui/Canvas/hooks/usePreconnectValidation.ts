@@ -39,12 +39,12 @@ export function usePreconnectValidation(palette: PaletteInterface | undefined, n
         return { ok: false, reason: `No se encuentra el nodo origen (${sourceId}) o sus datos.` };
       }
 
-      const sourceType: DiagramElementType<any> | undefined = findNodeType(sourceNode.kind, palette?.nodes);
+      const sourceType: DiagramElementType<any> | undefined = findNodeType(sourceNode.kind, palette);
       if (!sourceType) {
         return { ok: false, reason: `Tipo de nodo origen desconocido: ${String(sourceNode.kind)}.` };
       }
 
-      const targetType: DiagramElementType<any> | undefined = findNodeType(targetKind, palette?.nodes);
+      const targetType: DiagramElementType<any> | undefined = findNodeType(targetKind, palette);
       if (!targetType) {
         return { ok: false, reason: `Tipo de nodo destino desconocido: ${String(targetKind)}.` };
       }

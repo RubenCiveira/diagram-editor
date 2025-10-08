@@ -1,13 +1,13 @@
 /* --------------------------- Editor contenedor ----------------------------- */
 .diagram-container {
-  position: relative;
-  height: calc(100vh - var(--topbar-h, 0px));
-  width: 100%;
+  position: absolute;
+  top: 0; left:0; right: 0; bottom: 0;
   background: #fff;
+}
 
-  .react-flow {
-    height: 100%;
-  }
+.diagram-container  .react-flow {
+  position: absolute;
+  top: 0; left:0; right: 0; bottom: 0;
 }
 
 /* ------------------------ Safe area para React Flow ------------------------- */
@@ -32,7 +32,7 @@
   box-shadow: none !important;
 }
 .react-flow__controls > button {
-  margin: 0 2px;
+  margin: 5px 2px;
 }
 
 /* ========================= CAPAS (z-index y eventos) ======================= */
@@ -66,6 +66,7 @@
 
 /* ------------------------- Botones flotantes (+ / export) ------------------ */
 .rf-floating-add,
+.rf-floating-note,
 .rf-floating-export {
   position: absolute;
   top: 10px;
@@ -83,6 +84,10 @@
 }
 .rf-floating-add {
   left: 10px;
+}
+.rf-floating-note {
+  left: 10px;
+  top: 60px;
 }
 .rf-floating-export {
   right: 10px;
