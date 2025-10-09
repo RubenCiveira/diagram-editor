@@ -17,7 +17,7 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import './DiagramEditor.scss';
-import { Plus, Download, StickyNote, AlignCenterHorizontal, AlignCenterVertical, LayoutGrid, Cog } from 'lucide-react';
+import { Plus, StickyNote, AlignCenterHorizontal, AlignCenterVertical, LayoutGrid, Cog } from 'lucide-react';
 
 import {
   DiagramNode,

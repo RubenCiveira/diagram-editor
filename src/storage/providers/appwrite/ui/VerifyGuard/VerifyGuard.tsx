@@ -5,7 +5,7 @@ type Props = { onSuccess: () => void }
 export default function VerifyGuard({ onSuccess }: Props) {
     const sendVerification = function() {
         const location = window.location.origin + window.location.pathname + '?on=verify';
-        account.createVerification({ url: location });
+        account!.createVerification({ url: location });
     }
 
     return <div>

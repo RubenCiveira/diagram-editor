@@ -18,7 +18,7 @@ export default function AppwriteAuth({ onSuccess }: Props) {
 
   async function doLogin() {
     try {
-      await account.createEmailPasswordSession({email: email, password: password});
+      await account!.createEmailPasswordSession({email: email, password: password});
       onSuccess()
     } catch (e: any) {
       setError(e?.message ?? "No se pudo iniciar sesión")
@@ -27,9 +27,9 @@ export default function AppwriteAuth({ onSuccess }: Props) {
 
   async function doRegister() {
     try {
-      await account.create({ userId: ID.unique(), email: email, password: password })
-      await account.createEmailPasswordSession({email, password})
-      await account.createVerification( { url: successUrl } );
+      await account!.create({ userId: ID.unique(), email: email, password: password })
+      await account!.createEmailPasswordSession({email, password})
+      await account!.createVerification( { url: successUrl } );
       onSuccess()
     } catch (e: any) {
       setError(e?.message ?? "No se pudo registrar")
@@ -38,7 +38,7 @@ export default function AppwriteAuth({ onSuccess }: Props) {
 
   async function loginWithGoogle() {
     try {
-      await account.createOAuth2Token({provider: OAuthProvider.Google, success: successUrl, failure: failureUrl});
+      await account!.createOAuth2Token({provider: OAuthProvider.Google, success: successUrl, failure: failureUrl});
     } catch (e: any) {
       setError(e?.message ?? "No se pudo iniciar sesión con Google")
     }
@@ -46,7 +46,7 @@ export default function AppwriteAuth({ onSuccess }: Props) {
 
   async function loginWithGithub() {
     try {
-      await account.createOAuth2Token({provider: OAuthProvider.Github, success: successUrl, failure: failureUrl});
+      await account!.createOAuth2Token({provider: OAuthProvider.Github, success: successUrl, failure: failureUrl});
     } catch (e: any) {
       setError(e?.message ?? "No se pudo iniciar sesión con GitHub")
     }
