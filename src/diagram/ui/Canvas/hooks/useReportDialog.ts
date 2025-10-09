@@ -7,19 +7,18 @@ export function useReportDialog() {
   const [promise, setPromise] = React.useState<any>(null);
 
   const openReport = (html: ReportDetails): Promise<ReportResult> => {
-    setOpenedRport( true );
-    setReportContent( html );
+    setOpenedRport(true);
+    setReportContent(html);
     return new Promise((resolve) => {
-      setPromise( { use: resolve } );
+      setPromise({ use: resolve });
     });
-  }
+  };
 
   const onCloseReport = () => {
     setOpenedRport(false);
     setReportContent(null);
-    promise.use( { closed: true } );
+    promise.use({ closed: true });
   };
 
   return { openedReport, reportContent, openReport, onCloseReport };
 }
-

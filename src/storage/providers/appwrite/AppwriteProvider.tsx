@@ -7,7 +7,7 @@ import { DiagramModel } from '../../../diagram';
 import { Account, Databases, Models, Query } from 'appwrite';
 import { APPWRITE_CONFIG } from '../../../app/FeatureFlags';
 
-const databases = new Databases(client);
+const databases = new Databases(client!);
 
 export class AppwriteProvider implements Storage {
   manager(): ComponentType<any> | null | undefined {
@@ -29,7 +29,7 @@ export class AppwriteProvider implements Storage {
         let cancelled = false;
         (async () => {
           try {
-            const me = await account.get(); // ok si hay sesión
+            const me = await account!.get(); // ok si hay sesión
             if (!cancelled) {
               if (APPWRITE_CONFIG.require?.emailVerified && !me.emailVerification) {
                 setHasSession(false);
@@ -106,7 +106,7 @@ export class AppwriteProvider implements Storage {
     ];
     let resolvedOwnerId = ownerId;
     if (ownerId === 'me') {
-      const me = await account.get(); // requiere sesión válida
+      const me = await account!.get(); // requiere sesión válida
       resolvedOwnerId = me.$id;
     }
     if (resolvedOwnerId) {
@@ -117,7 +117,7 @@ export class AppwriteProvider implements Storage {
 
     const mapRepository = function (doc: Models.Document): Repository {
       return new AppwriteRepository({
-        account: account,
+        account: account!,
         databases: databases,
         dbId: APPWRITE_CONFIG.database,
         filesCollId: APPWRITE_CONFIG.files,

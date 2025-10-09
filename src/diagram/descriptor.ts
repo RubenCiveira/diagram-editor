@@ -71,7 +71,7 @@ export class DiagramDescriptor {
   }
 
   public toSvg(): Promise<string> {
-    return  this.toSvgRender();
+    return this.toSvgRender();
   }
 
   public actors(): NodeDescriptor[] {

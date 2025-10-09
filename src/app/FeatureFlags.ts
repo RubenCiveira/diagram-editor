@@ -1,10 +1,10 @@
 export const FEATURE_FLAGS = {
-  githubRepo: import.meta.env.VITE_FEATURE_USE_REPOSITORY_GITHUB,
-  localStorageRepo: import.meta.env.VITE_FEATURE_USE_REPOSITORY_LOCALSTORAGE,
-  appWriteRepo: import.meta.env.VITE_FEATURE_USE_REPOSITORY_APPWRITE,
-  sharedRepo: import.meta.env.VITE_FEATURE_USE_REPOSITORY_SHARED,
-  usedPalette: import.meta.env.VITE_FEATURE_USE_PALETTE,
-  forceLogin: import.meta.env.VITE_FEATURE_FORCE_LOGIN,
+  githubRepo: 'true' === import.meta.env.VITE_FEATURE_USE_REPOSITORY_GITHUB,
+  localStorageRepo: 'true' === import.meta.env.VITE_FEATURE_USE_REPOSITORY_LOCALSTORAGE,
+  appWriteRepo: 'true' === import.meta.env.VITE_FEATURE_USE_REPOSITORY_APPWRITE,
+  sharedRepo: 'true' === import.meta.env.VITE_FEATURE_USE_REPOSITORY_SHARED,
+  // usedPalette: 'true' === import.meta.env.VITE_FEATURE_USE_PALETTE,
+  // forceLogin: 'true' === import.meta.env.VITE_FEATURE_FORCE_LOGIN,
 };
 
 export const APPWRITE_CONFIG = {

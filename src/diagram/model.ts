@@ -78,17 +78,12 @@ export type DiagramModel = {
 
 export class RealtimeDiagram {
   public constructor(
-    private readonly setNodes: React.Dispatch<React.SetStateAction<Node<any, string | undefined>[]>>
-  ) {
-  }
+    private readonly setNodes: React.Dispatch<React.SetStateAction<Node<any, string | undefined>[]>>,
+  ) {}
   update(id: string, name: string, props: any) {
     this.setNodes((ns: any[]) =>
-        ns.map((n) =>
-          n.id === id
-            ? { ...n, data: { ...(n.data as DiagramNode), name: name, props: props } }
-            : n,
-        ),
-      );
+      ns.map((n) => (n.id === id ? { ...n, data: { ...(n.data as DiagramNode), name: name, props: props } } : n)),
+    );
   }
 }
 

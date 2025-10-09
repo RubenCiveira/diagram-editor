@@ -1,4 +1,4 @@
-import { Edge, Node } from "reactflow";
+import { Edge, Node } from 'reactflow';
 
 function shallowEqual(a: any, b: any) {
   if (a === b) return true;
@@ -10,14 +10,14 @@ function shallowEqual(a: any, b: any) {
   return true;
 }
 
-function mergeNode(existing: Node, incoming: Partial<Node> & Pick<Node,'id'>): Node {
+function mergeNode(existing: Node, incoming: Partial<Node> & Pick<Node, 'id'>): Node {
   // preserva data si no cambia
   const nextData =
     incoming.data === undefined
       ? existing.data
       : shallowEqual(existing.data, incoming.data)
-      ? existing.data
-      : { ...existing.data, ...incoming.data };
+        ? existing.data
+        : { ...existing.data, ...incoming.data };
 
   // preserva position/selected si no te llega uno nuevo
   const next = {
@@ -47,15 +47,15 @@ function mergeNode(existing: Node, incoming: Partial<Node> & Pick<Node,'id'>): N
  */
 export function upsertNodes(
   setNodes: React.Dispatch<React.SetStateAction<Node[]>>,
-  incoming: Array<Partial<Node> & Pick<Node,'id'>>
+  incoming: Array<Partial<Node> & Pick<Node, 'id'>>,
 ) {
-  setNodes(prev => {
-    const byId = new Map(prev.map(n => [n.id, n]));
+  setNodes((prev) => {
+    const byId = new Map(prev.map((n) => [n.id, n]));
     const next = [...prev];
 
     // actualiza existentes
     for (let i = 0; i < next.length; i++) {
-      const patch = incoming.find(n => n.id === next[i].id);
+      const patch = incoming.find((n) => n.id === next[i].id);
       if (patch) {
         const merged = mergeNode(next[i], patch);
         if (merged !== next[i]) next[i] = merged;
@@ -77,14 +77,14 @@ export function upsertNodes(
 /** Versión equivalente para edges (si la necesitas) */
 export function upsertEdges(
   setEdges: React.Dispatch<React.SetStateAction<Edge[]>>,
-  incoming: Array<Partial<Edge> & Pick<Edge,'id'>>
+  incoming: Array<Partial<Edge> & Pick<Edge, 'id'>>,
 ) {
-  setEdges(prev => {
-    const byId = new Map(prev.map(e => [e.id, e]));
+  setEdges((prev) => {
+    const byId = new Map(prev.map((e) => [e.id, e]));
     const next = [...prev];
 
     for (let i = 0; i < next.length; i++) {
-      const patch = incoming.find(e => e.id === next[i].id);
+      const patch = incoming.find((e) => e.id === next[i].id);
       if (patch) {
         const merged = { ...next[i], ...patch };
         if (shallowEqual(next[i], merged)) continue;

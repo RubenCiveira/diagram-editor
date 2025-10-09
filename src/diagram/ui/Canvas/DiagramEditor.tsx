@@ -13,10 +13,11 @@ import ReactFlow, {
   Node,
   ReactFlowInstance,
   Edge,
+  ControlButton,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import './DiagramEditor.scss';
-import { Plus, Download, StickyNote } from 'lucide-react';
+import { Plus, Download, StickyNote, AlignCenterHorizontal, AlignCenterVertical, LayoutGrid, Cog } from 'lucide-react';
 
 import {
   DiagramNode,
@@ -46,6 +47,7 @@ import { useNestValidation } from './hooks/useNestValidation';
 import { AppContext } from '../../../app/AppContext';
 import { findNodeType } from '../../../palette';
 import { useDeleteSelection } from './hooks/useDeleteSelection';
+import { layoutWithElk } from './hooks/layoutElk';
 
 const NODE_TYPES_STABLE = {
   c4: GenericNode,
@@ -138,17 +140,24 @@ function DiagramEditorImpl(
 
   const rfRef = React.useRef<ReactFlowInstance | null>(null);
   const paneRef = React.useRef<HTMLDivElement | null>(null);
+  const [views, setViews] = React.useState<DiagramView[]>(() => initialDiagram?.views ?? []);
 
   const [allNodes, setAllNodes] = React.useState<any[]>([]);
   const [allEdges, setAllEdges] = React.useState<any[]>([]);
 
   const [hiddenNodes, setHiddenNodes] = React.useState<string[]>([]);
-  const [views, setViews] = React.useState<DiagramView[]>(() => initialDiagram?.views ?? []);
   const [currentViewId, setCurrentViewId] = React.useState<string>('');
   const [viewDialogOpen, setViewDialogOpen] = React.useState(false);
   const [editingView, setEditingView] = React.useState<DiagramView | null>(null);
+  const [openLayout, setOpenLayout] = React.useState(false);
 
   const context = React.useContext(AppContext);
+
+  // para pantallas táctiles, permite toggle por click
+  const toggleLayoutButtons = React.useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    setOpenLayout((v) => !v);
+  }, []);
 
   React.useEffect(() => {
     const isDesign = mode === 'design' && currentViewId === '';
@@ -156,17 +165,11 @@ function DiagramEditorImpl(
 
     setNodes(
       allNodes.map((e) => {
-        // console.log("EVERY ", selectedIds );
-        // if( selectedIds.includes(e.id) ) {
-        //   console.log("WITH INCLUSION");
-        // }
         return {
           ...e,
           hidden: hiddenNodes.includes(e.id),
           draggable: isDesign,
           connectable: canConnect,
-          // selectable: true,
-          // selected: selectedIds.includes(e.id),
           data: { ...e.data, uiMode: mode },
         };
       }),
@@ -330,6 +333,7 @@ function DiagramEditorImpl(
   useHydrateFromJSON(
     initialDiagram ?? null,
     context?.palette,
+    allNodes, allEdges,
     (n) => setAllNodes(n as any),
     (e) => setAllEdges(e as any),
     (v) => setViews(v as any),
@@ -382,6 +386,32 @@ function DiagramEditorImpl(
     sourceHandle?: string;
     targetHandle?: string;
   }>(null);
+
+  const runLayout = React.useCallback(
+    async (direction: 'RIGHT' | 'DOWN') => {
+      // Opcional: si tienes un scheduler de snapshots, cancelarlo aquí
+      // cancelScheduledSnapshot?.();
+
+      const { nodes: nn } = await layoutWithElk({
+        nodes,
+        edges,
+        direction, // 'RIGHT' → L→R ; 'DOWN' → T→B
+        spacing: { nodeNodeBetweenLayers: 120, nodeNode: 40, edgeNode: 20 },
+        defaults: { width: 180, height: 100 }, // ajusta a tus tamaños por defecto
+      });
+
+      // Aplicar en 1 solo paso: evita parpadeos
+      setAllNodes(nn);
+      // setEdges(edges); // no es necesario tocar edges
+
+      // Zoom para encajar
+      // requestAnimationFrame(() => fit({ padding: 0.2, duration: 300 }));
+
+      // Empuja al histórico (si usas undo/redo)
+      commit?.();
+    },
+    [nodes, edges, setNodes, fit, commit],
+  );
 
   /** Añadir con posicionamiento mejorado */
   const handleAdd = React.useCallback(
@@ -547,24 +577,21 @@ function DiagramEditorImpl(
       />
 
       {/* Botones flotantes */}
-      {isDesign && (<>
-        <button
-          onClick={() => onOpenPalette?.()}
-          aria-label="Añadir nodo"
-          title="Añadir nodo"
-          className="rf-floating-add"
+      {isDesign && (
+        <>
+          <button
+            onClick={() => onOpenPalette?.()}
+            aria-label="Añadir nodo"
+            title="Añadir nodo"
+            className="rf-floating-add"
           >
-          <Plus size={18} />
-        </button>
-        { context.palette?.note &&
-        <button
-         onClick={() => addNote()}
-          aria-label="Añadir nodo"
-          title="Añadir nodo"
-          className="rf-floating-note"
-        >
-          <StickyNote size={18} />
-        </button> }
+            <Plus size={18} />
+          </button>
+          {context.palette?.note && (
+            <button onClick={() => addNote()} aria-label="Añadir nodo" title="Añadir nodo" className="rf-floating-note">
+              <StickyNote size={18} />
+            </button>
+          )}
         </>
       )}
 
@@ -574,7 +601,7 @@ function DiagramEditorImpl(
         title="Exportar diagrama"
         className="rf-floating-export"
       >
-        <Download size={18} />
+        <Cog size={18} />
       </button>
 
       <DiagramUIContext.Provider
@@ -618,15 +645,43 @@ function DiagramEditorImpl(
           defaultEdgeOptions={DEFAULT_EDGE_OPTIONS}
           edgesFocusable={true}
           edgesUpdatable={false}
+          onEdgeDoubleClick={(evt, edge) => {
+            evt.stopPropagation();
+            console.log('click en edge', edge.id, edge);
+            // haz lo que quieras: abrir menú, seleccionar, etc.
+          }}
         >
           <Controls
             position="bottom-right"
             showInteractive={false}
             style={{ background: 'transparent', border: 'none', boxShadow: 'none', width: 'auto', padding: 0 }}
           >
-            {/* <ControlButton onClick={() => alert('Something magical just happened. ✨')}>
-              <Hand />
-            </ControlButton> */}
+            <div
+              className="rf-align-control"
+              onMouseEnter={() => setOpenLayout(true)}
+              onMouseLeave={() => setOpenLayout(false)}
+              // evita que el canvas haga pan/zoom al interactuar con el popover
+              onMouseDown={(e) => e.stopPropagation()}
+            >
+              <ControlButton onClick={toggleLayoutButtons}>
+                <LayoutGrid />
+              </ControlButton>
+              {openLayout && (
+                <div
+                  className="rf-align-popover"
+                  role="menu"
+                  onClick={(e) => e.stopPropagation()}
+                  onMouseDown={(e) => e.stopPropagation()}
+                >
+                  <ControlButton onClick={() => runLayout('RIGHT')}>
+                    <AlignCenterHorizontal />
+                  </ControlButton>
+                  <ControlButton onClick={() => runLayout('DOWN')}>
+                    <AlignCenterVertical />
+                  </ControlButton>{' '}
+                </div>
+              )}
+            </div>
           </Controls>
           <Background gap={16} />
         </ReactFlow>

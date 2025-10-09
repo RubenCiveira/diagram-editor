@@ -27,7 +27,7 @@ export class ExportDetails implements ActionItem {
       this.render.showReport({
         html: html,
         menu: this.getMoreMenuActions(),
-        actions: this.getHeaderActions()
+        actions: this.getHeaderActions(),
       });
     }
   }

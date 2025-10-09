@@ -1,13 +1,19 @@
 /* --------------------------- Editor contenedor ----------------------------- */
 .diagram-container {
   position: absolute;
-  top: 0; left:0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: #fff;
 }
 
-.diagram-container  .react-flow {
+.diagram-container .react-flow {
   position: absolute;
-  top: 0; left:0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 /* ------------------------ Safe area para React Flow ------------------------- */
@@ -172,4 +178,44 @@
   border: none !important;
   width: 40px !important;
   height: 40px !important;
+}
+
+/* coloca el popover al lado del botón */
+.rf-align-control {
+  position: relative;
+  width: 32px;
+  height: 32px;
+}
+
+.rf-align-popover {
+  position: absolute;
+  top: 0;
+  right: 12px; /* a la derecha del ControlButton */
+  display: flex;
+  gap: 6px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 6px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  z-index: 10; /* por encima del canvas */
+  pointer-events: auto;
+}
+
+.rf-pop-btn {
+  font:
+    500 12px/1 system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background: #f8fafc;
+  cursor: pointer;
+}
+.rf-pop-btn:hover {
+  background: #eef2ff;
 }

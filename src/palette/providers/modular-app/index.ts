@@ -22,7 +22,7 @@ import { ActorUser } from './nodes/user';
 const dialog = new DialogRender();
 
 export const ModularAppPalette = {
-  actions: [new ExportDetails(dialog), new CopyToClipboard() ],
+  actions: [new ExportDetails(dialog), new CopyToClipboard()],
   nodes: [
     new ActorUser(dialog),
     new ShellUiElement(dialog),

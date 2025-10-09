@@ -13,11 +13,11 @@ import {
 type Snapshot = { nodes: Node[]; edges: Edge[] };
 
 export type UndoRedoOptions = {
-  limit?: number;                         // máx. entradas en histórico
-  resizableTypes?: string[];              // tipos que registran dimensions
+  limit?: number; // máx. entradas en histórico
+  resizableTypes?: string[]; // tipos que registran dimensions
   trackResize?: 'never' | 'end' | 'always';
-  resizeDebounceMs?: number;              // para 'always' o sin flag resizing
-  groupWithinMs?: number;                 // ⟵ ventana de agrupado (estilo n8n)
+  resizeDebounceMs?: number; // para 'always' o sin flag resizing
+  groupWithinMs?: number; // ⟵ ventana de agrupado (estilo n8n)
 };
 
 export function useUndoRedo(
@@ -25,13 +25,13 @@ export function useUndoRedo(
   setNodes: React.Dispatch<React.SetStateAction<Node[]>>,
   edges: Edge[],
   setEdges: React.Dispatch<React.SetStateAction<Edge[]>>,
-  opts: UndoRedoOptions = {}
+  opts: UndoRedoOptions = {},
 ) {
   const {
     limit = 100,
     resizableTypes = [],
     trackResize = 'end',
-    groupWithinMs = 150,                  // << recomendado 120–200ms
+    groupWithinMs = 150, // << recomendado 120–200ms
   } = opts;
 
   // ---------- Refs base ----------
@@ -44,33 +44,32 @@ export function useUndoRedo(
   const futureRef = React.useRef<Snapshot[]>([]);
   const [, force] = React.useState(0);
 
-  React.useEffect(() => { lastNodesRef.current = nodes; }, [nodes]);
-  React.useEffect(() => { lastEdgesRef.current = edges; }, [edges]);
+  React.useEffect(() => {
+    lastNodesRef.current = nodes;
+  }, [nodes]);
+  React.useEffect(() => {
+    lastEdgesRef.current = edges;
+  }, [edges]);
 
   const microtask =
-    typeof queueMicrotask === 'function'
-      ? queueMicrotask
-      : (cb: () => void) => Promise.resolve().then(cb);
+    typeof queueMicrotask === 'function' ? queueMicrotask : (cb: () => void) => Promise.resolve().then(cb);
 
   // ---------- Helpers ----------
   const stripUiFromNodes = (arr: Node[]): Node[] =>
     arr.map(({ selected, dragging, width, height, positionAbsolute, zIndex, ...n }) => n as Node);
 
-  const stripUiFromEdges = (arr: Edge[]): Edge[] =>
-    arr.map(({ selected, ...e }) => e as Edge);
+  const stripUiFromEdges = (arr: Edge[]): Edge[] => arr.map(({ selected, ...e }) => e as Edge);
 
   const signature = (s: Snapshot) =>
     JSON.stringify({
-      n: s.nodes.map(n => ({ id: n.id, t: n.type, p: n.position, d: n.data })),
-      e: s.edges.map(e => ({ id: e.id, s: e.source, t: e.target, ty: e.type, d: e.data })),
+      n: s.nodes.map((n) => ({ id: n.id, t: n.type, p: n.position, d: n.data })),
+      e: s.edges.map((e) => ({ id: e.id, s: e.source, t: e.target, ty: e.type, d: e.data })),
     });
 
   function rehydrateSelection(arr: Node[]): Node[] {
     const sel = selectedIdsRef.current;
-    return arr.map(n =>
-      sel.has(n.id)
-        ? (n.selected ? n : { ...n, selected: true })
-        : (n.selected ? { ...n, selected: false } : n)
+    return arr.map((n) =>
+      sel.has(n.id) ? (n.selected ? n : { ...n, selected: true }) : n.selected ? { ...n, selected: false } : n,
     );
   }
 
@@ -79,9 +78,8 @@ export function useUndoRedo(
     if (c.type === 'position') return !(c as NodePositionChange).dragging; // al soltar
     if (c.type === 'dimensions') {
       if (trackResize === 'never') return false;
-      const node = lastNodesRef.current.find(n => n.id === c.id);
-      const isResizable =
-        resizableTypes.length === 0 || (node && resizableTypes.includes(node.type || ''));
+      const node = lastNodesRef.current.find((n) => n.id === c.id);
+      const isResizable = resizableTypes.length === 0 || (node && resizableTypes.includes(node.type || ''));
       if (!isResizable) return false;
       const resizingFlag = (c as any).resizing;
       if (trackResize === 'end') return resizingFlag === false || typeof resizingFlag === 'undefined';
@@ -120,7 +118,7 @@ export function useUndoRedo(
     if (pastRef.current.length > limit) pastRef.current.shift();
     futureRef.current = [];
     schedRef.current.lastSig = nsig;
-    force(x => x + 1);
+    force((x) => x + 1);
   }, [limit]);
 
   // Agrupa llamadas dentro de groupWithinMs y luego empuja 1 snapshot
@@ -149,35 +147,40 @@ export function useUndoRedo(
     }, opts.resizeDebounceMs ?? 80) as unknown as number;
   }, [scheduleSnapshot, opts.resizeDebounceMs]);
 
-  const applySnapshot = React.useCallback((snap: Snapshot) => {
-    applyingRef.current = true;
+  const applySnapshot = React.useCallback(
+    (snap: Snapshot) => {
+      applyingRef.current = true;
 
-    const selectedNow = new Set(lastNodesRef.current.filter(n => n.selected).map(n => n.id));
-    selectedIdsRef.current = selectedNow;
+      const selectedNow = new Set(lastNodesRef.current.filter((n) => n.selected).map((n) => n.id));
+      selectedIdsRef.current = selectedNow;
 
-    setNodes(() => {
-      const next = snap.nodes.map(n => ({
-        ...n,
-        selected: selectedNow.has(n.id),
-        dragging: false,
-      }));
-      lastNodesRef.current = next;
-      return next;
-    });
+      setNodes(() => {
+        const next = snap.nodes.map((n) => ({
+          ...n,
+          selected: selectedNow.has(n.id),
+          dragging: false,
+        }));
+        lastNodesRef.current = next;
+        return next;
+      });
 
-    setEdges(() => {
-      lastEdgesRef.current = snap.edges;
-      return snap.edges;
-    });
+      setEdges(() => {
+        lastEdgesRef.current = snap.edges;
+        return snap.edges;
+      });
 
-    // sincroniza firma con lo aplicado
-    schedRef.current.lastSig = signature({
-      nodes: stripUiFromNodes(lastNodesRef.current),
-      edges: stripUiFromEdges(lastEdgesRef.current),
-    });
+      // sincroniza firma con lo aplicado
+      schedRef.current.lastSig = signature({
+        nodes: stripUiFromNodes(lastNodesRef.current),
+        edges: stripUiFromEdges(lastEdgesRef.current),
+      });
 
-    microtask(() => { applyingRef.current = false; });
-  }, [setNodes, setEdges]);
+      microtask(() => {
+        applyingRef.current = false;
+      });
+    },
+    [setNodes, setEdges],
+  );
 
   // siembra histórico inicial
   React.useEffect(() => {
@@ -198,20 +201,23 @@ export function useUndoRedo(
     const key = (c: NodeChange) => `${c.type}:${(c as any).id ?? '_'}`;
 
     for (const c of changes) {
-      if (c.type === 'select') { if (c.id) lastSelectById.set(c.id, c); continue; }
+      if (c.type === 'select') {
+        if (c.id) lastSelectById.set(c.id, c);
+        continue;
+      }
       if (c.type === 'position') {
         const k = key(c);
         const prev = lastByKey.get(k) as NodePositionChange | undefined;
         const curr = c as NodePositionChange;
         if (!prev) lastByKey.set(k, curr);
-        else lastByKey.set(k, (!prev.dragging && curr.dragging) ? prev : curr);
+        else lastByKey.set(k, !prev.dragging && curr.dragging ? prev : curr);
         continue;
       }
       lastByKey.set(key(c), c); // dimensions/add/remove/update...
     }
 
     // filtra selects que no cambian el estado final
-    const effectiveSelects = Array.from(lastSelectById.values()).filter(sel => {
+    const effectiveSelects = Array.from(lastSelectById.values()).filter((sel) => {
       const id = (sel as any).id!;
       const next = (sel as any).selected as boolean;
       const prev = selectedIdsRef.current.has(id);
@@ -235,14 +241,12 @@ export function useUndoRedo(
     // actualiza selección con los selects fusionados
     for (const c of merged) {
       if (c.type === 'select' && c.id) {
-        (c as any).selected
-          ? selectedIdsRef.current.add(c.id)
-          : selectedIdsRef.current.delete(c.id);
+        (c as any).selected ? selectedIdsRef.current.add(c.id) : selectedIdsRef.current.delete(c.id);
       }
     }
 
     // aplica TODO de una vez y rehidrata (evita flash)
-    setNodes(prev => {
+    setNodes((prev) => {
       const next = applyNodeChanges(merged, prev);
       const next2 = rehydrateSelection(next);
       lastNodesRef.current = next2;
@@ -251,9 +255,9 @@ export function useUndoRedo(
 
     // decidir snapshot
     if (!applyingRef.current) {
-      const onlySelectOrReset = merged.every(c => c.type === 'select' || c.type === 'reset');
+      const onlySelectOrReset = merged.every((c) => c.type === 'select' || c.type === 'reset');
       if (!onlySelectOrReset) {
-        const onlyDims = merged.every(c => c.type === 'dimensions');
+        const onlyDims = merged.every((c) => c.type === 'dimensions');
         const hasMeaningful = merged.some(isMeaningfulNodeChange);
         if (hasMeaningful) {
           if (onlyDims && trackResize === 'always') scheduleResizeSnapshot();
@@ -263,52 +267,53 @@ export function useUndoRedo(
     }
   }, [setNodes, scheduleSnapshot, scheduleResizeSnapshot, trackResize]);
 
-  const isSelectionOnly = (changes: NodeChange[]) => changes.every(c => c.type === 'select');
+  const isSelectionOnly = (changes: NodeChange[]) => changes.every((c) => c.type === 'select');
 
-  const onNodesChangeWithHistory = React.useCallback((changes: NodeChange[]) => {
-    // fast-path: sólo selección ⇒ aplica ya (sin buffer ni snapshot)
-    if (isSelectionOnly(changes)) {
-      for (const c of changes) {
-        if (c.type === 'select' && c.id) {
-          (c as any).selected
-            ? selectedIdsRef.current.add(c.id)
-            : selectedIdsRef.current.delete(c.id);
+  const onNodesChangeWithHistory = React.useCallback(
+    (changes: NodeChange[]) => {
+      // fast-path: sólo selección ⇒ aplica ya (sin buffer ni snapshot)
+      if (isSelectionOnly(changes)) {
+        for (const c of changes) {
+          if (c.type === 'select' && c.id) {
+            (c as any).selected ? selectedIdsRef.current.add(c.id) : selectedIdsRef.current.delete(c.id);
+          }
         }
+        setNodes((prev) => {
+          const next = applyNodeChanges(changes, prev);
+          const next2 = rehydrateSelection(next);
+          lastNodesRef.current = next2;
+          return next2;
+        });
+        return;
       }
-      setNodes(prev => {
-        const next = applyNodeChanges(changes, prev);
-        const next2 = rehydrateSelection(next);
-        lastNodesRef.current = next2;
-        return next2;
-      });
-      return;
-    }
 
-    // resto ⇒ buffer en micro-tarea
-    if (!bufferedNodeChangesRef.current) bufferedNodeChangesRef.current = [];
-    bufferedNodeChangesRef.current.push(...changes);
+      // resto ⇒ buffer en micro-tarea
+      if (!bufferedNodeChangesRef.current) bufferedNodeChangesRef.current = [];
+      bufferedNodeChangesRef.current.push(...changes);
 
-    if (!microtaskScheduledRef.current) {
-      microtaskScheduledRef.current = true;
-      microtask(flushBufferedNodeChanges);
-    }
-  }, [setNodes, flushBufferedNodeChanges]);
+      if (!microtaskScheduledRef.current) {
+        microtaskScheduledRef.current = true;
+        microtask(flushBufferedNodeChanges);
+      }
+    },
+    [setNodes, flushBufferedNodeChanges],
+  );
 
   const onEdgesChangeWithHistory = React.useCallback(
     (changes: EdgeChange[]) => {
-      setEdges(prev => {
+      setEdges((prev) => {
         const next = applyEdgeChanges(changes, prev);
         lastEdgesRef.current = next;
         return next;
       });
 
       if (applyingRef.current) return;
-      if (changes.every(c => c.type === 'select')) return;
+      if (changes.every((c) => c.type === 'select')) return;
       if (changes.some(isMeaningfulEdgeChange)) {
         scheduleSnapshot();
       }
     },
-    [setEdges, scheduleSnapshot]
+    [setEdges, scheduleSnapshot],
   );
 
   // ---------- API ----------
@@ -320,12 +325,12 @@ export function useUndoRedo(
     if (pastRef.current.length <= 1) return;
     cancelScheduledSnapshot();
 
-    const current = pastRef.current.pop()!;  // actual → future
+    const current = pastRef.current.pop()!; // actual → future
     futureRef.current.push(current);
 
     const prev = pastRef.current[pastRef.current.length - 1];
     applySnapshot(prev);
-    force(x => x + 1);
+    force((x) => x + 1);
   }, [applySnapshot, cancelScheduledSnapshot]);
 
   const redo = React.useCallback(() => {
@@ -335,14 +340,19 @@ export function useUndoRedo(
     const next = futureRef.current.pop()!;
     pastRef.current.push(next);
     applySnapshot(next);
-    force(x => x + 1);
+    force((x) => x + 1);
   }, [applySnapshot, cancelScheduledSnapshot]);
 
   const canUndo = pastRef.current.length > 1;
   const canRedo = futureRef.current.length > 0;
 
   return {
-    commit, undo, redo, canUndo, canRedo,
-    onNodesChangeWithHistory, onEdgesChangeWithHistory,
+    commit,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
+    onNodesChangeWithHistory,
+    onEdgesChangeWithHistory,
   };
 }

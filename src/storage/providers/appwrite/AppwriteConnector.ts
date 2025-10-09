@@ -1,10 +1,18 @@
 import { Account, Client } from 'appwrite';
-import { APPWRITE_CONFIG } from '../../../app/FeatureFlags';
+import { APPWRITE_CONFIG, FEATURE_FLAGS } from '../../../app/FeatureFlags';
 
-export const client = new Client();
-client.setEndpoint(APPWRITE_CONFIG.endpoint).setProject(APPWRITE_CONFIG.project);
+export const [client, account] = connect();
 
-export const account = new Account(client); // Export an Account instance initialized with the client
+function connect(): [Client?, Account?] {
+  if (FEATURE_FLAGS.appWriteRepo) {
+    const client = new Client();
+    client.setEndpoint(APPWRITE_CONFIG.endpoint).setProject(APPWRITE_CONFIG.project);
+    const account = new Account(client); // Export an Account instance initialized with the client
+    return [client, account];
+  } else {
+    return [undefined, undefined];
+  }
+}
 
 async function AuthCallback(toError?: string) {
   (async () => {
@@ -15,7 +23,7 @@ async function AuthCallback(toError?: string) {
       const secret = p.get('secret');
       const expire = p.get('expire');
       if (userId && secret && expire) {
-        await account.updateVerification({ userId: userId, secret: secret });
+        await account!.updateVerification({ userId: userId, secret: secret });
         // 4) Limpiar la URL y redirigir donde quieras
         window.history.replaceState({}, '', '/');
         // p.ej. ya puedes hacer: const me = await account.get();
@@ -29,10 +37,10 @@ async function AuthCallback(toError?: string) {
       const secret = p.get('secret');
       if (userId && secret) {
         // 2) Intercambiar userId+secret por sesión (no dependemos de cookie)
-        const session = await account.createSession({ userId, secret });
+        const session = await account!.createSession({ userId, secret });
 
         // 3a) Autenticar el cliente por sesión sin cookie:
-        client.setSession(session.secret); // todas las llamadas del SDK ya van autenticadas
+        client!.setSession(session.secret); // todas las llamadas del SDK ya van autenticadas
 
         // (opcional) 3b) Cambiar a JWT y olvidarte de la sesión/cookies
         // const { jwt } = await account.createJWT();

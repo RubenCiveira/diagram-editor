@@ -20,7 +20,7 @@ export function useAddElement(
 ) {
   return React.useCallback(
     (kind: DiagramNode['kind'], opts?: AddOptions): Node => {
-      const t = ( palette?.note?.kind && palette?.note?.kind === kind) ? palette?.note : findNodeType(kind, palette)!;
+      const t = palette?.note?.kind && palette?.note?.kind === kind ? palette?.note : findNodeType(kind, palette)!;
       const id = uid();
       const defProps = t.defaultProps() as any;
       const baseSize = t?.nodeSize?.({ props: defProps }) ?? { width: 96, height: 96 };
@@ -33,22 +33,20 @@ export function useAddElement(
       const position = { x: panePos.x + dx, y: panePos.y + dy };
 
       const newNode = {
+        id,
+        position,
+        data: {
           id,
-          position,
-          data: {
-            id,
-            kind,
-            name: `${t.title} ${id.slice(0, 4)}`,
-            props: defProps,
-          } as DiagramNode,
-          type: 'c4',
-          style: { width: baseSize.width, height: baseSize.height, zIndex },
-          zIndex,
-        };
+          kind,
+          name: `${t.title} ${id.slice(0, 4)}`,
+          props: defProps,
+        } as DiagramNode,
+        type: 'c4',
+        style: { width: baseSize.width, height: baseSize.height, zIndex },
+        zIndex,
+      };
 
-      setNodes((ns: any[]) =>
-        ns.concat(newNode),
-      );
+      setNodes((ns: any[]) => ns.concat(newNode));
 
       return newNode;
     },
