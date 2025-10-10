@@ -43,14 +43,13 @@ export function useSerialize(nodes: Array<any>, edges: Array<any>, createdAt?: s
         return out;
       }),
       edges: edges.map((e) => ({
-        id: e.id,
-        source: e.source,
-        target: e.target,
-        sourceHandle: e.sourceHandle,
-        targetHandle: e.targetHandle,
-        kind: (e as any).kind as DiagramModel['edges'][number]['kind'],
-        technology: (e as any).technology,
-        description: (e as any).description,
+        id: e.data.id,
+        source: e.data.source,
+        target: e.data.target,
+        sourceHandle: e.data.sourceHandle,
+        targetHandle: e.data.targetHandle,
+        props: e.data.props ?? {},
+        kind: e.data.kind,
       })),
       views: views || [],
     };

@@ -14,7 +14,6 @@ type Props = {
   onBusyAcquire?(callback: (release: () => void) => void, msg?: string): void;
   onError?(msg: string): void;
 
-  mode: EditorMode;
   onModeChange: (m: EditorMode) => void;
 };
 
@@ -23,7 +22,6 @@ export default function TopToolbar({
   getCurrentDiagram,
   onBusyAcquire,
   onError,
-  mode,
   onModeChange,
 }: Props) {
   const [repos, setRepos] = React.useState<Repository[] | null>(null);
@@ -47,13 +45,25 @@ export default function TopToolbar({
     }
   };
 
+  const load = async function(fileName: null|undefined|string) {
+     if( fileName ) {
+      const res = repo?.loadFile( fileName );
+      return res;
+    } else {
+      return null;
+    }
+  }
+
   // On set repo name => select Repo
   React.useEffect(() => {
     setRepo(repos?.find((repo) => repo.name() == repoName) || null);
   }, [repoName]);
+
   // on set file name => seleft File
   React.useEffect(() => {
-    setFile(files?.find((file) => file.name() == fileName) || null);
+    load( fileName ).then( file => {
+      setFile( file ?? null );
+    });
   }, [fileName]);
 
   // on select file => load content
@@ -194,13 +204,7 @@ export default function TopToolbar({
       <button onClick={() => setShowConfig(true)}>Configuración</button>
       <div className="spacer" />
 
-      <select id="mode" value={mode} onChange={(e) => onModeChange(e.target.value as EditorMode)}>
-        <option value="design">Diseño</option>
-        <option value="edit">Edición</option>
-        <option value="readonly">Solo lectura</option>
-      </select>
-
-      <label>Repos {repoName}</label>
+      <label>Repos</label>
       <select value={repoName || ''} onChange={(e) => setRepoName(e.target.value)}>
         <option value="" disabled>
           — Selecciona —

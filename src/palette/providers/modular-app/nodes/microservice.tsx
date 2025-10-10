@@ -31,7 +31,7 @@ export class MicroserviceElement implements DiagramElementType<MicroserviceProps
       menu: this.getMoreMenuActions(props, node),
     });
     if (data.accepted) {
-      diagram.update(node.id, data.title, data.data);
+      diagram.update(node, data.title, data.data);
     }
   }
 

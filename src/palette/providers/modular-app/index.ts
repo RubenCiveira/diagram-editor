@@ -18,11 +18,15 @@ import { NoteElement } from '../generic/nodes/note';
 import { OAuthProxyElement } from './nodes/oauth-proxy';
 import { ShellUiElement } from './nodes/shell-ui';
 import { ActorUser } from './nodes/user';
+import { RemoteWebRequest } from './edges/remote-web-request';
+import { RemoteTransactionRequest } from './edges/remote-transaction-request';
+import { RemoteSoapRequest } from './edges/remote-soap-request';
 
 const dialog = new DialogRender();
 
 export const ModularAppPalette = {
   actions: [new ExportDetails(dialog), new CopyToClipboard()],
+  edges: [new RemoteWebRequest(dialog), new RemoteSoapRequest(dialog), new RemoteTransactionRequest(dialog)],
   nodes: [
     new ActorUser(dialog),
     new ShellUiElement(dialog),

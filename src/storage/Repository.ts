@@ -9,8 +9,10 @@ export interface Storage {
 
 export interface Repository {
   name(): string;
+  loadFile(name: string): FileStorage | Promise<FileStorage | null>;
   listFiles(): FileStorage[] | Promise<FileStorage[]>;
   createFile(name: string): FileStorage | Promise<FileStorage>;
+  searchFile?(): Promise<FileStorage>;
 }
 
 export interface FileStorage {

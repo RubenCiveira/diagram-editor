@@ -29,7 +29,7 @@ export class ApiElement implements DiagramElementType<ApiProps> {
       definition: this.definition(),
     });
     if (data.accepted) {
-      diagram.update(node.id, data.title, data.data);
+      diagram.update(node, data.title, data.data);
     }
   }
 
@@ -40,10 +40,9 @@ export class ApiElement implements DiagramElementType<ApiProps> {
         title: 'API',
         properties: {
           protocol: { type: 'string', title: 'Protocolo', enum: ['http', 'https', 'grpc'], default: 'https' },
-          basePath: { type: 'string', title: 'Base Path', description: '/users' },
-          version: { type: 'string', title: 'Versión', default: 'v1' },
           auth: { type: 'string', title: 'Auth', enum: ['none', 'basic', 'oauth'], default: 'oauth' },
-          specUrl: { type: 'string', title: 'Spec URL', format: 'url' },
+          path: { type: 'string', title: 'Path' },
+          spec: { type: 'string', title: 'Spec URL' },
         },
         required: ['protocol', 'basePath'],
       },

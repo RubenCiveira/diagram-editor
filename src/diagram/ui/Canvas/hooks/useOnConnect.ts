@@ -1,6 +1,9 @@
 import { useCallback } from 'react';
 import { addEdge, MarkerType } from 'reactflow';
 import { findNodeType, PaletteInterface } from '../../../../palette';
+import { DiagramEdge } from '../../../model';
+
+const uid = () => Math.random().toString(36).slice(2, 10);
 
 /**
  * onConnect con soporte para conexiones verticales padre→hijo y bloqueo de combinaciones inválidas:
@@ -25,6 +28,7 @@ export function useOnConnect(
         targetHandle?: string | null;
       } & any,
     ) => {
+      const id = uid();
       const source = params.source!;
       const target = params.target!;
       const sh = params.sourceHandle ?? null;
@@ -32,6 +36,17 @@ export function useOnConnect(
 
       // ¿Interviene algún conector vertical?
       const usesVertical = sh === 'children' || th === 'parent';
+
+      const defProps = {};
+      const data = {
+        id,
+        kind: usesVertical ? 'parentChild' : 'lateral',
+        source: source,
+        target: target,
+        sourceHandle: sh,
+        targetHandle: th,
+        props: defProps,
+      } as DiagramEdge;
 
       if (usesVertical) {
         // Debe ser EXACTAMENTE children -> parent
@@ -83,9 +98,11 @@ export function useOnConnect(
         setEdges((eds: any[]) =>
           addEdge(
             {
+              id,
               ...params,
               type: 'c4',
               markerEnd: { type: MarkerType.ArrowClosed },
+              data,
               style: { strokeWidth: 2.75 },
             },
             eds,
@@ -107,9 +124,11 @@ export function useOnConnect(
         setEdges((eds: any[]) =>
           addEdge(
             {
+              id,
               ...params,
               type: 'c4',
               markerEnd: { type: MarkerType.ArrowClosed },
+              data,
               style: { strokeWidth: 2.75 },
             },
             eds,

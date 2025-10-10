@@ -17,9 +17,10 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import './DiagramEditor.scss';
-import { Plus, StickyNote, AlignCenterHorizontal, AlignCenterVertical, LayoutGrid, Cog } from 'lucide-react';
+import { Plus, StickyNote, AlignCenterHorizontal, AlignCenterVertical, LayoutGrid, Cog, HandGrab, SquarePen, Lock } from 'lucide-react';
 
 import {
+  DiagramEdge,
   DiagramNode,
   RealtimeDiagram,
   type DiagramModel,
@@ -48,6 +49,10 @@ import { AppContext } from '../../../app/AppContext';
 import { findNodeType } from '../../../palette';
 import { useDeleteSelection } from './hooks/useDeleteSelection';
 import { layoutWithElk } from './hooks/layoutElk';
+import { DiagramEdgeType, DiagramEdgeTypeCtx } from '../../../palette/DiagramEdgeType';
+
+const uid = () => Math.random().toString(36).slice(2, 10);
+
 
 const NODE_TYPES_STABLE = {
   c4: GenericNode,
@@ -76,6 +81,7 @@ type Props = {
   onUpdateDiagram?: (kind: DiagramModel) => void;
   onBusyAcquire?(callback: (release: () => void) => void, msg?: string): void;
   mode: EditorMode;
+  onModeChange: (m: EditorMode) => void;
 };
 
 /* ---------- utilidades de colocación ---------- */
@@ -132,7 +138,7 @@ function findFreePosition(
 }
 
 function DiagramEditorImpl(
-  { initialDiagram, onOpenPalette, onOpenActions, onUpdateDiagram, onBusyAcquire, mode }: Props,
+  { initialDiagram, onOpenPalette, onOpenActions, onUpdateDiagram, onBusyAcquire, mode, onModeChange }: Props,
   ref: React.Ref<DiagramEditorHandle>,
 ) {
   const [nodes, setNodes, _onNodesChange] = useNodesState([]);
@@ -150,6 +156,7 @@ function DiagramEditorImpl(
   const [viewDialogOpen, setViewDialogOpen] = React.useState(false);
   const [editingView, setEditingView] = React.useState<DiagramView | null>(null);
   const [openLayout, setOpenLayout] = React.useState(false);
+  const [openMode, setOpenMode] = React.useState(false);
 
   const context = React.useContext(AppContext);
 
@@ -158,23 +165,31 @@ function DiagramEditorImpl(
     e.stopPropagation();
     setOpenLayout((v) => !v);
   }, []);
+  const toggleModeButtons = React.useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    setOpenMode((v) => !v);
+  }, []);
 
   React.useEffect(() => {
     const isDesign = mode === 'design' && currentViewId === '';
     const canConnect = mode === 'design' && currentViewId === '';
 
     setNodes(
-      allNodes.map((e) => {
-        return {
-          ...e,
-          hidden: hiddenNodes.includes(e.id),
-          draggable: isDesign,
-          connectable: canConnect,
-          data: { ...e.data, uiMode: mode },
-        };
-      }),
+      allNodes.map((e) => ({
+        ...e,
+        hidden: hiddenNodes.includes(e.id),
+        draggable: isDesign,
+        connectable: canConnect,
+        data: { ...e.data, uiMode: mode },
+      })),
     );
-    setEdges(allEdges.map((e) => ({ ...e, hidden: hiddenNodes.includes(e.source) || hiddenNodes.includes(e.target) })));
+    setEdges(
+      allEdges.map((e) => ({
+        ...e,
+        data: { ...e.data, uiMode: mode },
+        hidden: hiddenNodes.includes(e.source) || hiddenNodes.includes(e.target),
+      })),
+    );
   }, [allNodes, allEdges, hiddenNodes, mode, currentViewId]);
 
   const { onInit: onInitFit, fit } = useReactFlowFit();
@@ -333,7 +348,8 @@ function DiagramEditorImpl(
   useHydrateFromJSON(
     initialDiagram ?? null,
     context?.palette,
-    allNodes, allEdges,
+    allNodes,
+    allEdges,
     (n) => setAllNodes(n as any),
     (e) => setAllEdges(e as any),
     (v) => setViews(v as any),
@@ -353,19 +369,20 @@ function DiagramEditorImpl(
     setHiddenNodes(currentView ? allNodes.map((n) => n.id).filter((n) => !currentView.includeNodeIds.includes(n)) : []);
   }, [currentViewId, views]);
 
-  React.useEffect(() => {
-    const isDesign = mode === 'design' && currentViewId === '';
-    const canConnect = mode === 'design' && currentViewId === '';
-    setNodes((nds) =>
-      nds.map((n) => ({
-        ...n,
-        draggable: isDesign, // ⬅️ bloqueo real de arrastre por nodo
-        connectable: canConnect, // ⬅️ opcional: anula handles para crear conexiones
-        // (opcional) propagar el modo al data del nodo por si tu GenericNode lo necesita
-        data: { ...n.data, uiMode: mode },
-      })),
-    );
-  }, [mode, currentViewId, setNodes]);
+  // FIXME: probably wrong: the use of effect that dump allNodes on Nodes looks more effective
+  // React.useEffect(() => {
+  //   const isDesign = mode === 'design' && currentViewId === '';
+  //   const canConnect = mode === 'design' && currentViewId === '';
+  //   setNodes((nds) =>
+  //     nds.map((n) => ({
+  //       ...n,
+  //       draggable: isDesign, // ⬅️ bloqueo real de arrastre por nodo
+  //       connectable: canConnect, // ⬅️ opcional: anula handles para crear conexiones
+  //       // (opcional) propagar el modo al data del nodo por si tu GenericNode lo necesita
+  //       data: { ...n.data, uiMode: mode },
+  //     })),
+  //   );
+  // }, [mode, currentViewId, setNodes]);
 
   const canConnect = useConnectValidation(nodes as any[], context?.palette);
   const canNest = useNestValidation(nodes as any[], context?.palette);
@@ -445,9 +462,22 @@ function DiagramEditorImpl(
         } else {
           setPendingAutoConnect({ source: sourceId, target: newId });
         }
+        const id = uid();
+        const defProps = {};
+        const data = {
+          id,
+          kind: from === 'children' ? 'parentChild' : 'lateral',
+          source: sourceId,
+          target: newId,
+          sourceHandle: from === 'children' ? 'parent' : 'out',
+          targetHandle: from === 'children' ? 'children' : 'in',
+          props: defProps,
+        } as DiagramEdge;
         setAllEdges((eds: any[]) =>
           addEdge(
             {
+              id,
+              data,
               source: sourceId,
               target: newId,
               sourceHandle: from === 'children' ? 'parent' : 'out',
@@ -461,10 +491,9 @@ function DiagramEditorImpl(
         );
         setPendingFrom(null);
       }
-
       const nodeType = findNodeType(kind, context.palette);
       if (nodeType) {
-        nodeType.open(newNode.data.props, newNode.data as DiagramNode, new RealtimeDiagram(setNodes!));
+        nodeType.open(newNode.data.props, newNode.data as DiagramNode, new RealtimeDiagram(setAllNodes!, setAllEdges!));
       } else {
         console.error('No info for type of the data');
       }
@@ -613,8 +642,8 @@ function DiagramEditorImpl(
           },
           design: isDesign,
           readOnly: readOnly,
-          setNodes: setNodes,
-          // render: render,
+          setNodes: setAllNodes,
+          setEdges: setAllEdges,
         }}
       >
         <ReactFlow
@@ -647,8 +676,46 @@ function DiagramEditorImpl(
           edgesUpdatable={false}
           onEdgeDoubleClick={(evt, edge) => {
             evt.stopPropagation();
-            console.log('click en edge', edge.id, edge);
-            // haz lo que quieras: abrir menú, seleccionar, etc.
+            const eprovs = context?.palette?.edges;
+            if (eprovs) {
+              const dEdge = edges.find((e) => e.id === edge.id);
+              if (!dEdge) {
+                console.error('NO EDGE');
+                return;
+              }
+              const nSource = nodes.find((n) => n.id === edge.source);
+              if (!nSource) {
+                console.error('NO SOURCE NODE');
+                return;
+              }
+              const nTarget = nodes.find((n) => n.id === edge.target);
+              if (!nTarget) {
+                console.error('NO TARGET NODE');
+                return;
+              }
+              const ctx = {
+                source: nSource.data as DiagramNode,
+                sourceNode: nSource,
+                target: nTarget.data as DiagramNode,
+                targetNode: nTarget,
+                edge: dEdge.data as DiagramEdge,
+                connectionEdge: dEdge,
+                sourceHandle: edge.sourceHandle,
+                targetHandle: edge.targetHandle,
+              } as DiagramEdgeTypeCtx;
+              let selectedNumber = 0;
+              let selected: DiagramEdgeType | undefined;
+              eprovs.forEach((prov) => {
+                const number = prov.precedence(ctx);
+                if (number > selectedNumber) {
+                  selectedNumber = number;
+                  selected = prov;
+                }
+              });
+              if (selected) {
+                selected.open(dEdge.data.props, ctx, new RealtimeDiagram(setAllNodes!, setAllEdges!));
+              }
+            }
           }}
         >
           <Controls
@@ -678,7 +745,37 @@ function DiagramEditorImpl(
                   </ControlButton>
                   <ControlButton onClick={() => runLayout('DOWN')}>
                     <AlignCenterVertical />
-                  </ControlButton>{' '}
+                  </ControlButton>
+                </div>
+              )}
+            </div>
+             <div
+              className="rf-align-control"
+              onMouseEnter={() => setOpenMode(true)}
+              onMouseLeave={() => setOpenMode(false)}
+              onMouseDown={(e) => e.stopPropagation()}
+            >
+              <ControlButton onClick={toggleModeButtons}>
+                { mode === 'design' && <HandGrab />}
+                { mode === 'edit' && <SquarePen /> } 
+                { mode === 'readonly' && <Lock />}
+              </ControlButton>
+              {openMode && (
+                <div
+                  className="rf-align-popover"
+                  role="menu"
+                  onClick={(e) => e.stopPropagation()}
+                  onMouseDown={(e) => e.stopPropagation()}
+                >
+                  <ControlButton onClick={() => onModeChange('design')}>
+                    <HandGrab />
+                  </ControlButton>
+                  <ControlButton onClick={() => onModeChange('edit')}>
+                    <SquarePen />
+                  </ControlButton>
+                  <ControlButton onClick={() => onModeChange('readonly')}>
+                    <Lock />
+                  </ControlButton>
                 </div>
               )}
             </div>

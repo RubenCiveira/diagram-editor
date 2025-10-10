@@ -1,5 +1,5 @@
 import React from 'react';
-import { Node } from 'reactflow';
+import { Edge, Node } from 'reactflow';
 
 export type FromHandle = 'right' | 'children';
 
@@ -9,6 +9,7 @@ export type DiagramUIContextValue = {
   design?: boolean;
   readOnly?: boolean;
   setNodes?: React.Dispatch<React.SetStateAction<Node<any, string | undefined>[]>>;
+  setEdges?: React.Dispatch<React.SetStateAction<Edge<any>[]>>;
 };
 
 export const DiagramUIContext = React.createContext<DiagramUIContextValue>({});

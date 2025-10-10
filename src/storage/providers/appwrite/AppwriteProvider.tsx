@@ -155,8 +155,28 @@ export class AppwriteRepository implements Repository {
     return (this.repoDoc as any).name as string;
   }
 
+  async loadFile(name: string): Promise<FileStorage|null> {
+    const res = await this.databases.listDocuments(this.dbId, this.filesCollId, [
+      Query.equal("name", name)
+      // Puedes añadir queries si usas Appwrite v1/v3: Query.equal("repoId", this.repoDoc.$id)
+      // Para mantenerlo compatible sin importar Query:
+      // (Appwrite requiere Query.equal; si lo tienes disponible, úsalo)
+    ] as any);
+    const every = res.documents.map(
+      (doc) =>
+        new AppwriteFileStorage({
+          account: this.account,
+          databases: this.databases,
+          dbId: this.dbId,
+          filesCollId: this.filesCollId,
+          repoDoc: this.repoDoc,
+          fileDoc: doc,
+        }),
+    );
+    return every.length > 0 ? every[0] : null;
+  }
+
   async listFiles(): Promise<FileStorage[]> {
-    console.log("LIST FILES");
     const res = await this.databases.listDocuments(this.dbId, this.filesCollId, [
       Query.equal("repository", this.repoDoc.$id)
       // Puedes añadir queries si usas Appwrite v1/v3: Query.equal("repoId", this.repoDoc.$id)

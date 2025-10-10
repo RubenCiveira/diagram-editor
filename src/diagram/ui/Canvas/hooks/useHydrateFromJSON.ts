@@ -300,9 +300,13 @@ export function useHydrateFromJSON(
         type: 'c4',
         selected: !!original?.selected,
         data: {
+          id: e.id,
+          source: e.source,
+          target: e.target,
+          sourceHandle: e.sourceHandle,
+          targetHandle: e.targetHandle,
           kind: e.kind,
-          technology: e.technology,
-          description: e.description,
+          props: e.props,
         },
       };
     });

@@ -40,6 +40,11 @@ class LocalRepository implements Repository {
     return this.dir;
   }
 
+  async loadFile(name: string): Promise<FileStorage | null> {
+    const files = await this.listFiles();
+    return files.find((f) => f.name() === name) ?? null;
+  }
+
   listFiles(): FileStorage[] | Promise<FileStorage[]> {
     return this.doList();
   }

@@ -1,4 +1,4 @@
-import { Node } from 'reactflow';
+import { Edge, Node } from 'reactflow';
 import { z } from 'zod';
 
 /* ============================================================================
@@ -6,17 +6,7 @@ import { z } from 'zod';
  * ==========================================================================*/
 export type EditorMode = 'design' | 'edit' | 'readonly';
 
-export type ElementKind =
-  | 'userActor'
-  | 'gateway'
-  | 'api'
-  | 'microservice'
-  | 'microFront'
-  | 'shell'
-  | 'externalService'
-  | 'proxyConfig'
-  | 'note'
-  | (string & {}); // extensible: permite tipos de nodo futuros
+export type ElementKind = string;
 
 /** Punto en el lienzo */
 export type Position = { x: number; y: number };
@@ -53,8 +43,7 @@ export type DiagramEdge = {
   kind?: EdgeKind;
 
   /** Campos opcionales de negocio/documentación */
-  description?: string;
-  technology?: string;
+  props?: Record<string, any>;
 };
 
 export type DiagramView = {
@@ -79,11 +68,25 @@ export type DiagramModel = {
 export class RealtimeDiagram {
   public constructor(
     private readonly setNodes: React.Dispatch<React.SetStateAction<Node<any, string | undefined>[]>>,
+    private readonly setEdges: React.Dispatch<React.SetStateAction<Edge<any>[]>>,
   ) {}
-  update(id: string, name: string, props: any) {
-    this.setNodes((ns: any[]) =>
-      ns.map((n) => (n.id === id ? { ...n, data: { ...(n.data as DiagramNode), name: name, props: props } } : n)),
-    );
+  update(node: DiagramNode | DiagramEdge, name: string, props: any) {
+    if (this.isDiagramEdge(node)) {
+      this.setEdges((ns: any[]) =>
+        ns.map((n) => (n.id === node.id ? { ...n, data: { ...(n.data as DiagramEdge), props: props } } : n)),
+      );
+    } else {
+      this.setNodes((ns: any[]) =>
+        ns.map((n) =>
+          n.id === node.id ? { ...n, data: { ...(n.data as DiagramNode), name: name, props: props } } : n,
+        ),
+      );
+    }
+  }
+
+  // Type guard: ¿es una arista?
+  private isDiagramEdge(x: DiagramNode | DiagramEdge): x is DiagramEdge {
+    return 'source' in x && 'target' in x;
   }
 }
 
@@ -147,13 +150,3 @@ export function tryParseDiagramModel(input: unknown): { ok: true; data: DiagramM
     return { ok: false, error: e?.message ?? String(e) };
   }
 }
-
-// /**
-//  * Utilidad: deduce el tipo lógico de arista si faltara, a partir de los handles.
-//  * parentChild = sourceHandle:'children' y targetHandle:'parent'; si no, lateral.
-//  */
-// export function edgeInferKind(e: DiagramEdge): EdgeKind {
-//   if (e.kind) return e.kind;
-//   if (e.sourceHandle === 'children' && e.targetHandle === 'parent') return 'parentChild';
-//   return 'lateral';
-// }

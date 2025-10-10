@@ -2,13 +2,12 @@ import type { ReactNode } from 'react';
 import type { DiagramModel, DiagramNode, RealtimeDiagram } from '../diagram';
 import type { ElementKind } from '../diagram';
 
-export type NodeActionContext = {};
-
 export type NodeCategory = 'actor' | 'component' | 'note';
 
 export type ConnectCheckResult = { ok: true } | { ok: false; reason: string };
 
 export type FromHandle = 'out' | 'children';
+
 export type ToHandle = 'in' | 'parent';
 
 export type IncomingEdge = {

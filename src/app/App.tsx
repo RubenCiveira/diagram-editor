@@ -267,6 +267,7 @@ export default function App() {
           key={diagramKey}
           ref={editorRef}
           mode={mode}
+          onModeChange={setMode}
           initialDiagram={diagram || { version: '1.0', nodes: [], edges: [], views: [] }}
           onOpenPalette={() => setShowPalette(true)}
           onOpenActions={() => setShowActions(true)}
@@ -314,7 +315,6 @@ export default function App() {
           onCancel={onCancelEdit}
           onSave={onSaveEdit}
         />
-
         {/* Report dialog */}
         <ReportDialog open={openedReport} details={reportContent ?? null} onClose={onCloseReport} />
       </UrlStateProvider>

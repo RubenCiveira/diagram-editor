@@ -17,7 +17,7 @@ const DEFAULT_SQUARE = { width: '96px', height: '96px' };
 
 export default function GenericNode({ data, selected }: NodeProps<DiagramNode>) {
   const context = React.useContext(AppContext);
-  const { setNodes } = React.useContext(DiagramUIContext);
+  const { setNodes, setEdges } = React.useContext(DiagramUIContext);
   const typeDef = data?.kind ? findNodeType(data.kind, context?.palette) : undefined;
   const props = (data as any).props ?? {};
   const label = typeDef ? typeDef.label({ name: data.name, props }) : (data.name ?? 'Elemento');
@@ -45,7 +45,7 @@ export default function GenericNode({ data, selected }: NodeProps<DiagramNode>) 
 
   const onDbl = (e: React.MouseEvent) => {
     e.stopPropagation();
-    typeDef?.open(data.props, data!, new RealtimeDiagram(setNodes!));
+    typeDef?.open(data.props, data!, new RealtimeDiagram(setNodes!, setEdges!));
   };
 
   const conent = (

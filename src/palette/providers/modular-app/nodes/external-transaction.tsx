@@ -26,7 +26,7 @@ export class ExternalTransactionElement implements DiagramElementType<ExternalTr
       definition: this.definition(),
     });
     if (data.accepted) {
-      diagram.update(node.id, data.title, data.data);
+      diagram.update(node, data.title, data.data);
     }
   }
 

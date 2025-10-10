@@ -3,6 +3,7 @@ import { AppContext } from '../app/AppContext';
 import { DiagramModel, DiagramNode } from '../diagram';
 import { ActionItem } from './ActionItem';
 import { DiagramElementType, DiagramNodeIntance } from './DiagramElementType';
+import { DiagramEdgeType } from './DiagramEdgeType';
 
 export type DiagramValidator = (diagram: DiagramModel) => Promise<void>;
 
@@ -10,6 +11,7 @@ export interface PaletteInterface {
   actions: ActionItem[];
   nodes: DiagramElementType[];
   validators: DiagramValidator[];
+  edges?: DiagramEdgeType[];
   note?: DiagramElementType;
 }
 
