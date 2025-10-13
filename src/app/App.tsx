@@ -22,8 +22,8 @@ import { useEditDialog } from '../diagram/ui/Canvas/hooks/useEditDialog';
 import { useReportDialog } from '../diagram/ui/Canvas/hooks/useReportDialog';
 import { ReportResult, ReportDetails, FormDetail, DiagramRender } from '../dialog/model';
 import { attachDiagramRender } from '../dialog/dialogGateway';
-import EditNodeDialog from '../dialog/uid/EditDialog/EditNodeDialog';
-import ReportDialog from '../dialog/uid/ReportDialog/ReportDialog';
+import EditNodeDialog from '../dialog/ui/EditDialog/EditNodeDialog';
+import ReportDialog from '../dialog/ui/ReportDialog/ReportDialog';
 
 export default function App() {
   const fileRef = React.useRef<FileStorage | null>(null);
