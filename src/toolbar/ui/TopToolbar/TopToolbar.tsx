@@ -17,13 +17,7 @@ type Props = {
   onModeChange: (m: EditorMode) => void;
 };
 
-export default function TopToolbar({
-  onLoadDiagram,
-  getCurrentDiagram,
-  onBusyAcquire,
-  onError,
-  onModeChange,
-}: Props) {
+export default function TopToolbar({ onLoadDiagram, getCurrentDiagram, onBusyAcquire, onError, onModeChange }: Props) {
   const [repos, setRepos] = React.useState<Repository[] | null>(null);
   const [repoName, setRepoName] = React.useState<string | null | undefined>();
   const [repo, setRepo] = React.useState<Repository | null>(null);
@@ -32,7 +26,6 @@ export default function TopToolbar({
   const [files, setFiles] = React.useState<FileStorage[] | null>(null);
   const [file, setFile] = React.useState<FileStorage | null>(null);
 
-  const [loading, _setLoading] = React.useState(false);
   const [showConfig, setShowConfig] = React.useState<boolean>(false);
 
   const context = React.useContext(AppContext);
@@ -45,14 +38,14 @@ export default function TopToolbar({
     }
   };
 
-  const load = async function(fileName: null|undefined|string) {
-     if( fileName ) {
-      const res = repo?.loadFile( fileName );
+  const load = async function (fileName: null | undefined | string) {
+    if (fileName) {
+      const res = repo?.loadFile(fileName);
       return res;
     } else {
       return null;
     }
-  }
+  };
 
   // On set repo name => select Repo
   React.useEffect(() => {
@@ -61,8 +54,8 @@ export default function TopToolbar({
 
   // on set file name => seleft File
   React.useEffect(() => {
-    load( fileName ).then( file => {
-      setFile( file ?? null );
+    load(fileName).then((file) => {
+      setFile(file ?? null);
     });
   }, [fileName]);
 
@@ -98,8 +91,8 @@ export default function TopToolbar({
           const first = availables.length ? availables[0] : null;
           setRepo(first);
           setRepoName(first?.name() || '');
-        } else if( !repo ) {
-          setRepo( current );
+        } else if (!repo) {
+          setRepo(current);
         }
       } catch (error) {
         onError?.('Error refreshig repositories');
@@ -111,7 +104,7 @@ export default function TopToolbar({
 
   useUrlBind('file', [fileName, setFileName]);
   useUrlBind('repo', [repoName, setRepoName]);
-  useUrlOnLoad(loadRepos );
+  useUrlOnLoad(loadRepos);
 
   const loadFilesOfRepository = React.useCallback(
     async (repo: Repository | null | undefined, fileName: string | null | undefined) => {
@@ -174,7 +167,7 @@ export default function TopToolbar({
     runBusy(async (release?: () => void) => {
       try {
         await repo?.createFile(name);
-        setFileName( name );
+        setFileName(name);
         loadFilesOfRepository(repo, name);
       } catch (e: any) {
         onError?.(e?.message ?? String(e));
@@ -223,6 +216,12 @@ export default function TopToolbar({
         <option value="" disabled>
           — Selecciona —
         </option>
+        <option value="" onClick={handleCreate} onSelect={handleCreate}>
+          Crear
+        </option>
+        <option value="" disabled>
+          ----
+        </option>
         {(files || [])
           .map((f) => f.name())
           .map((f) => (
@@ -230,14 +229,20 @@ export default function TopToolbar({
               {f}
             </option>
           ))}
+        <option value="" disabled>
+          ----
+        </option>
+        <option value="" onClick={loadRepos} onSelect={loadRepos}>
+          Refrescar
+        </option>
       </select>
-      <button onClick={() => loadRepos()} disabled={loading}>
+      {/* <button onClick={() => loadRepos()} disabled={loading}>
         {loading ? 'Cargando…' : 'Refrescar'}
-      </button>
+      </button> */}
 
       <div className="spacer" />
 
-      <button onClick={handleCreate}>Crear</button>
+      {/* <button onClick={handleCreate}>Crear</button> */}
       <button onClick={handleDelete} disabled={!fileName}>
         Borrar
       </button>
