@@ -48,7 +48,6 @@ import { useNestValidation } from './hooks/useNestValidation';
 import { AppContext } from '../../../app/AppContext';
 import { findNodeType } from '../../../palette';
 import { useDeleteSelection } from './hooks/useDeleteSelection';
-import { layoutWithElk } from './hooks/layoutElk';
 import { DiagramEdgeType, DiagramEdgeTypeCtx } from '../../../palette/DiagramEdgeType';
 
 const uid = () => Math.random().toString(36).slice(2, 10);
@@ -408,7 +407,7 @@ function DiagramEditorImpl(
     async (direction: 'RIGHT' | 'DOWN') => {
       // Opcional: si tienes un scheduler de snapshots, cancelarlo aquí
       // cancelScheduledSnapshot?.();
-
+      const { layoutWithElk } = await import('./hooks/layoutElk'); // se baja sólo aquí
       const { nodes: nn } = await layoutWithElk({
         nodes,
         edges,
@@ -416,15 +415,7 @@ function DiagramEditorImpl(
         spacing: { nodeNodeBetweenLayers: 120, nodeNode: 40, edgeNode: 20 },
         defaults: { width: 180, height: 100 }, // ajusta a tus tamaños por defecto
       });
-
-      // Aplicar en 1 solo paso: evita parpadeos
       setAllNodes(nn);
-      // setEdges(edges); // no es necesario tocar edges
-
-      // Zoom para encajar
-      // requestAnimationFrame(() => fit({ padding: 0.2, duration: 300 }));
-
-      // Empuja al histórico (si usas undo/redo)
       commit?.();
     },
     [nodes, edges, setNodes, fit, commit],
