@@ -91,8 +91,7 @@ export function useCopySelection({ nodes, edges, onDone, onError }: UseCopySelec
             sourceHandle: (e as any).sourceHandle,
             targetHandle: (e as any).targetHandle,
           } as any),
-          description: (e as any).data?.description,
-          technology: (e as any).data?.technology,
+          props: (e as any).props ?? {},
         };
         return de;
       });

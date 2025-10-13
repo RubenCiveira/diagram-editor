@@ -108,8 +108,11 @@ function toReactFlowAppendables(
       type: 'c4',
       data: {
         kind: e.kind,
-        technology: e.technology,
-        description: e.description,
+        props: e.props,
+        source: e.source,
+        target: e.target,
+        sourceHandle: e.sourceHandle,
+        targetHandle: e.targetHandle,
       },
     }));
 

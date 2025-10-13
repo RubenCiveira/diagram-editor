@@ -50,10 +50,10 @@ export class RemoteWebRequest implements DiagramEdgeType<RemoteRequestProps> {
         properties: {
           path: { type: 'string', title: 'Base Path' },
           method: { type: 'string', title: 'Method', enum: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'] },
-          connection: connectionType(),
-          retry: retryType(),
-          circuit: circuitType(),
-          cache: cacheType()
+          connection: connectionType,
+          retry: retryType,
+          circuit: circuitType,
+          cache: cacheType
         },
         required: ['protocol', 'basePath'],
       },

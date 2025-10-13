@@ -252,7 +252,6 @@ export default function App() {
       {/* Toolbar */}
       <div ref={topRef}>
         <TopToolbar
-          mode={mode}
           onModeChange={setMode}
           onLoadDiagram={handleLoadDiagram}
           getCurrentDiagram={getCurrentDiagram}
