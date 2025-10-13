@@ -24,6 +24,8 @@ import { ReportResult, ReportDetails, FormDetail, DiagramRender } from '../dialo
 import { attachDiagramRender } from '../dialog/dialogGateway';
 import EditNodeDialog from '../dialog/ui/EditDialog/EditNodeDialog';
 import ReportDialog from '../dialog/ui/ReportDialog/ReportDialog';
+import { TracesSample } from '../storage/TraceSample';
+import { MetricsSample } from '../storage/MetricSample';
 
 export default function App() {
   const fileRef = React.useRef<FileStorage | null>(null);
@@ -46,6 +48,8 @@ export default function App() {
   const [mode, setMode] = React.useState<EditorMode>('design');
   const [error, setError] = React.useState<string | null>(null);
   const [diagram, setDiagram] = React.useState<DiagramModel | null>(null);
+  const [traces, setTraces] = React.useState<TracesSample | null>(null);
+  const [metrics, setMetrics] = React.useState<MetricsSample | null>(null);
   const [diagramKey, setDiagramKey] = React.useState<number>(0);
   const [busyStack, setBusyStack] = React.useState<any[]>([]);
 
@@ -118,6 +122,20 @@ export default function App() {
       setTimeout(() => {
         release?.();
       }, 100);
+    }, 100);
+  }, []);
+  const handleLoadTraces = React.useCallback((json: TracesSample, release?: () => void) => {
+    console.log("LOAD TRACES FOR ", json);
+    setTraces( json );
+    setTimeout(() => {
+      release?.();
+    }, 100);
+  }, []);
+  const handleLoadMetrics = React.useCallback((json: MetricsSample, release?: () => void) => {
+    console.log("LOAD METRICS FOR ", json);
+    setMetrics( json );
+    setTimeout(() => {
+      release?.();
     }, 100);
   }, []);
 
@@ -253,7 +271,9 @@ export default function App() {
       <div ref={topRef}>
         <TopToolbar
           onModeChange={setMode}
+          onLoadTraces={handleLoadTraces}
           onLoadDiagram={handleLoadDiagram}
+          onLoadMetrics={handleLoadMetrics}
           getCurrentDiagram={getCurrentDiagram}
           onBusyAcquire={acquireBusy}
           onError={handleError}
@@ -268,6 +288,8 @@ export default function App() {
           mode={mode}
           onModeChange={setMode}
           initialDiagram={diagram || { version: '1.0', nodes: [], edges: [], views: [] }}
+          traceStack={ traces ?? undefined }
+          metricsStack={ metrics ?? undefined }
           onOpenPalette={() => setShowPalette(true)}
           onOpenActions={() => setShowActions(true)}
           onUpdateDiagram={(diagram) => updateDiagram(diagram)}

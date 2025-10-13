@@ -40,6 +40,7 @@ export function useOnConnect(
       const defProps = {};
       const data = {
         id,
+        acive: false,
         kind: usesVertical ? 'parentChild' : 'lateral',
         source: source,
         target: target,

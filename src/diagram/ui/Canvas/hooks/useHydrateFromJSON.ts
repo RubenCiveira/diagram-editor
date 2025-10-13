@@ -301,6 +301,7 @@ export function useHydrateFromJSON(
         selected: !!original?.selected,
         data: {
           id: e.id,
+          active: original?.data?.active,
           source: e.source,
           target: e.target,
           sourceHandle: e.sourceHandle,

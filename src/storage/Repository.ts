@@ -4,7 +4,7 @@ import { DiagramModel } from '../diagram';
 export interface Storage {
   manager(): ComponentType<any> | null | undefined;
   listRepositories(): Repository[] | Promise<Repository[]>;
-  gateComponent(): null | ComponentType<{ onReady: () => void }>; // | Promise<ComponentType<{ onReady: () => void }>>;
+  gateComponent(): null | ComponentType<{ onReady: () => void }>;
 }
 
 export interface Repository {

@@ -1,0 +1,246 @@
+/* --- contenedor y botón --- */
+.rfm-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.rfm-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  background: #fff;
+  cursor: pointer;
+  font:
+    500 14px/1.2 system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    Arial;
+}
+.rfm-btn::after {
+  content: '▾';
+  opacity: 0.7;
+  font-size: 12px;
+}
+.rfm-btn:hover {
+  background: #f8fafc;
+}
+.rfm-btn:focus {
+  outline: 2px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+/* --- panel emergente --- */
+.rfm-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0; /* si prefieres alinear derecha: right:0; left:auto; */
+  width: 560px;
+  max-width: calc(100vw - 20px);
+  max-height: 420px; /* alto máx. */
+  overflow: auto; /* scroll del panel */
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.12);
+  z-index: 1000;
+  padding: 0.5rem;
+  animation: rfm-fade 0.12s ease-out;
+}
+@keyframes rfm-fade {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* --- grid de dos columnas --- */
+.rfm-grid {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: 0.75rem;
+}
+
+/* columnas */
+.rfm-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.rfm-col--left {
+  border-right: 1px solid #f1f5f9;
+  padding-right: 0.5rem;
+}
+.rfm-col--right {
+  padding-left: 0.25rem;
+}
+
+/* cabeceras */
+.rfm-head {
+  margin: 0 0 0.5rem 0;
+  padding: 0.25rem 0.25rem;
+  font-weight: 600;
+  color: #0f172a;
+  background: #f8fafc;
+  border-radius: 0.5rem;
+}
+
+/* acciones (crear/buscar/recargar) */
+.rfm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.rfm-action {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  background: #fff;
+  cursor: pointer;
+  font-size: 12px;
+}
+.rfm-action:hover {
+  background: #f1f5f9;
+}
+
+/* listas */
+.rfm-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.25rem;
+  overflow: auto;
+}
+
+.rfm-item {
+  display: block;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+}
+
+.rfm-item--row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0 0.25rem;
+}
+
+/* enlaces/botones de fila */
+.rfm-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.5rem;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  color: #0f172a;
+  border-radius: 0.5rem;
+}
+.rfm-item--row .rfm-link {
+  width: auto;
+} /* en filas con 2 acciones */
+
+.rfm-link:hover {
+  background: #f8fafc;
+}
+.rfm-link:focus {
+  outline: 2px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+.rfm-danger {
+  color: #b91c1c;
+}
+.rfm-danger:hover {
+  background: #fef2f2;
+}
+
+/* opcional: resaltar item activo (añade .is-active en li si quieres) */
+.rfm-item.is-active .rfm-link {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+}
+
+/* Responsive: en pantallas estrechas apila columnas */
+@media (max-width: 560px) {
+  .rfm-panel {
+    width: min(520px, 96vw);
+  }
+  .rfm-grid {
+    grid-template-columns: 1fr;
+  }
+  .rfm-col--left {
+    border-right: 0;
+    padding-right: 0;
+  }
+  .rfm-col--right {
+    padding-left: 0;
+  }
+}
+
+.rfm-list-left {
+  max-height: 210px;
+}
+
+.rfm-list-right {
+  max-height: 250px;
+}
+
+.rfm-col--left .rfm-item .rfm-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rfm-col--left .rfm-item .rfm-link::after {
+  content: '›'; /* o '>' si prefieres */
+  margin-left: auto; /* empuja la flecha a la derecha */
+  opacity: 0.5;
+  font-weight: 600;
+  transition: opacity 0.12s ease;
+}
+.rfm-col--left .rfm-item .rfm-link:hover::after {
+  opacity: 0.8;
+}
+
+.rfm-item--row {
+  /* ya era flex en tu CSS anterior */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.25rem;
+}
+.rfm-item--row .rfm-link:first-child {
+  flex: 1 1 auto; /* ocupa el ancho disponible */
+  min-width: 0; /* permite ellipsis */
+  text-align: left;
+}
+.rfm-item--row .rfm-link:first-child span,
+.rfm-item--row .rfm-link:first-child {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* … cuando no cabe */
+}
+.rfm-item--row .rfm-link:last-child {
+  flex: 0 0 auto; /* “Delete” no crece */
+  width: auto;
+  padding-inline: 0.5rem;
+}
+
+/* (opcional) alinear el botón Delete al borde derecho visual */
+.rfm-list {
+  gap: 0.25rem;
+} /* ya lo tienes; garantiza separación homogénea */

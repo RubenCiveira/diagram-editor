@@ -12,7 +12,7 @@ export default function GenericEdge(props: EdgeProps) {
     targetPosition,
   });
 
-  const active = false;
+  const active = props.data?.active;
   // Estilo base + resaltado si está seleccionado
   const stroke = selected ? '#111827' : (style?.stroke as string) || '#334155';
   const strokeWidth = selected ? 3.5 : (style?.strokeWidth as number) || 2.75;
@@ -26,8 +26,8 @@ export default function GenericEdge(props: EdgeProps) {
       style={{ ...style, stroke, strokeWidth }}
       interactionWidth={24} // hitbox cómodo para selección
       />
-      { active && <circle r="10" fill="#ff0073">
-        <animateMotion dur="2s" repeatCount="indefinite" path={edgePath} />
+      { active===true && <circle r="10" fill="#ff0073">
+        <animateMotion dur="1s" repeatCount="indefinite" path={edgePath} />
       </circle> }
       { selected && <button>GO</button>}
       </>

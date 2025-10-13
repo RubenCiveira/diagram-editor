@@ -6,12 +6,56 @@ import { account, client } from './AppwriteConnector';
 import { DiagramModel } from '../../../diagram';
 import { Account, Databases, Models, Query } from 'appwrite';
 import { APPWRITE_CONFIG } from '../../../app/FeatureFlags';
+import { TraceRepository, TracesSample } from '../../TraceSample';
 
 const databases = new Databases(client!);
 
-export class AppwriteProvider implements Storage {
+export class AppwriteProvider implements Storage, TraceRepository {
   manager(): ComponentType<any> | null | undefined {
     return null;
+  }
+
+  searchTracesSample(_file: FileStorage): Promise<TracesSample> | TracesSample {
+    return {
+      traces: () => [
+        {
+          id: '1',
+          label: 'Uno',
+          source: 'Enemigos de lo ajeno',
+          target: 'Shell UI 8qxr',
+          activate: true,
+          props: {},
+          message: '',
+        },
+        {
+          id: '2',
+          label: 'Dos',
+          source: 'Shell UI 8qxr',
+          target: 'Micro Front j0rg',
+          activate: true,
+          props: {},
+          message: '',
+        },
+        {
+          id: '3',
+          label: 'Tres',
+          source: 'Micro Front j0rg',
+          target: 'Shell UI 8qxr',
+          activate: false,
+          props: {},
+          message: '',
+        },
+        {
+          id: '4',
+          label: 'Cuatro',
+          source: 'Shell UI 8qxr',
+          target: 'Enemigos de lo ajeno',
+          activate: false,
+          props: {},
+          message: '',
+        },
+      ],
+    };
   }
 
   listRepositories(): Repository[] | Promise<Repository[]> {
@@ -112,8 +156,10 @@ export class AppwriteProvider implements Storage {
     if (resolvedOwnerId) {
       queries.push(Query.equal('ownerId', resolvedOwnerId));
     }
-    const res = await databases.listDocuments({databaseId: APPWRITE_CONFIG.database, 
-    collectionId: APPWRITE_CONFIG.repositories });
+    const res = await databases.listDocuments({
+      databaseId: APPWRITE_CONFIG.database,
+      collectionId: APPWRITE_CONFIG.repositories,
+    });
 
     const mapRepository = function (doc: Models.Document): Repository {
       return new AppwriteRepository({
@@ -155,9 +201,9 @@ export class AppwriteRepository implements Repository {
     return (this.repoDoc as any).name as string;
   }
 
-  async loadFile(name: string): Promise<FileStorage|null> {
+  async loadFile(name: string): Promise<FileStorage | null> {
     const res = await this.databases.listDocuments(this.dbId, this.filesCollId, [
-      Query.equal("name", name)
+      Query.equal('name', name),
       // Puedes añadir queries si usas Appwrite v1/v3: Query.equal("repoId", this.repoDoc.$id)
       // Para mantenerlo compatible sin importar Query:
       // (Appwrite requiere Query.equal; si lo tienes disponible, úsalo)
@@ -178,7 +224,7 @@ export class AppwriteRepository implements Repository {
 
   async listFiles(): Promise<FileStorage[]> {
     const res = await this.databases.listDocuments(this.dbId, this.filesCollId, [
-      Query.equal("repository", this.repoDoc.$id)
+      Query.equal('repository', this.repoDoc.$id),
       // Puedes añadir queries si usas Appwrite v1/v3: Query.equal("repoId", this.repoDoc.$id)
       // Para mantenerlo compatible sin importar Query:
       // (Appwrite requiere Query.equal; si lo tienes disponible, úsalo)
@@ -208,7 +254,7 @@ export class AppwriteRepository implements Repository {
     const doc = await this.databases.createDocument(this.dbId, this.filesCollId, 'unique()', {
       name: name,
       repository: this.repoDoc.$id,
-      json: JSON.stringify( diagram ),
+      json: JSON.stringify(diagram),
     });
 
     return new AppwriteFileStorage({
@@ -289,7 +335,7 @@ export class AppwriteFileStorage implements FileStorage {
     const fresh = await this.databases.getDocument(this.dbId, this.filesCollId, this.fileDoc.$id);
     this.fileDoc = fresh;
     // el campo "diagram" guarda el JSON del diagrama
-    
+
     return JSON.parse((fresh as any).json) as DiagramModel;
   }
 

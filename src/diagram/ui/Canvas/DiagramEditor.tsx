@@ -17,7 +17,17 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import './DiagramEditor.scss';
-import { Plus, StickyNote, AlignCenterHorizontal, AlignCenterVertical, LayoutGrid, Cog, HandGrab, SquarePen, Lock } from 'lucide-react';
+import {
+  Plus,
+  StickyNote,
+  AlignCenterHorizontal,
+  AlignCenterVertical,
+  LayoutGrid,
+  Cog,
+  HandGrab,
+  SquarePen,
+  Lock,
+} from 'lucide-react';
 
 import {
   DiagramEdge,
@@ -49,9 +59,11 @@ import { AppContext } from '../../../app/AppContext';
 import { findNodeType } from '../../../palette';
 import { useDeleteSelection } from './hooks/useDeleteSelection';
 import { DiagramEdgeType, DiagramEdgeTypeCtx } from '../../../palette/DiagramEdgeType';
+import StackView from '../StackView/StackView';
+import { TracesSample, Trace } from '../../../storage/TraceSample';
+import { MetricsSample } from '../../../storage/MetricSample';
 
 const uid = () => Math.random().toString(36).slice(2, 10);
-
 
 const NODE_TYPES_STABLE = {
   c4: GenericNode,
@@ -75,6 +87,8 @@ export interface DiagramEditorHandle {
 
 type Props = {
   initialDiagram?: DiagramModel | null;
+  traceStack?: TracesSample;
+  metricsStack?: MetricsSample;
   onOpenPalette?: () => void;
   onOpenActions?: () => void;
   onUpdateDiagram?: (kind: DiagramModel) => void;
@@ -137,7 +151,17 @@ function findFreePosition(
 }
 
 function DiagramEditorImpl(
-  { initialDiagram, onOpenPalette, onOpenActions, onUpdateDiagram, onBusyAcquire, mode, onModeChange }: Props,
+  {
+    initialDiagram,
+    traceStack,
+    metricsStack,
+    onOpenPalette,
+    onOpenActions,
+    onUpdateDiagram,
+    onBusyAcquire,
+    mode,
+    onModeChange,
+  }: Props,
   ref: React.Ref<DiagramEditorHandle>,
 ) {
   const [nodes, setNodes, _onNodesChange] = useNodesState([]);
@@ -147,11 +171,14 @@ function DiagramEditorImpl(
   const paneRef = React.useRef<HTMLDivElement | null>(null);
   const [views, setViews] = React.useState<DiagramView[]>(() => initialDiagram?.views ?? []);
 
-  const [allNodes, setAllNodes] = React.useState<any[]>([]);
-  const [allEdges, setAllEdges] = React.useState<any[]>([]);
+  const [allNodes, setAllNodes] = React.useState<Node[]>([]);
+  const [allEdges, setAllEdges] = React.useState<Edge[]>([]);
+  const [activeEdges, setActiveEdges] = React.useState<Edge[]>([]);
 
   const [hiddenNodes, setHiddenNodes] = React.useState<string[]>([]);
   const [currentViewId, setCurrentViewId] = React.useState<string>('');
+  const [viewStackOpen, setViewStackOpen] = React.useState(false);
+  const [stack, setStack] = React.useState<any[]>([]);
   const [viewDialogOpen, setViewDialogOpen] = React.useState(false);
   const [editingView, setEditingView] = React.useState<DiagramView | null>(null);
   const [openLayout, setOpenLayout] = React.useState(false);
@@ -182,14 +209,15 @@ function DiagramEditorImpl(
         data: { ...e.data, uiMode: mode },
       })),
     );
+    console.log( activeEdges );
     setEdges(
       allEdges.map((e) => ({
         ...e,
-        data: { ...e.data, uiMode: mode },
+        data: { ...e.data, uiMode: mode, active: !!activeEdges?.find(a => a.id === e.id) },
         hidden: hiddenNodes.includes(e.source) || hiddenNodes.includes(e.target),
       })),
     );
-  }, [allNodes, allEdges, hiddenNodes, mode, currentViewId]);
+  }, [allNodes, allEdges, activeEdges, hiddenNodes, mode, currentViewId]);
 
   const { onInit: onInitFit, fit } = useReactFlowFit();
 
@@ -493,6 +521,68 @@ function DiagramEditorImpl(
     [addElement, pendingFrom, nodes, setNodes],
   );
 
+  const activeStackRow = React.useCallback(
+    (items: any) => {
+      const sameSource = (edge: Edge, item: Trace) => {
+        const source = allNodes.find((node) => node.id === edge.source);
+        return source?.data?.name === item.source;
+      };
+      const sameTarget = (edge: Edge, item: Trace) => {
+        const target = allNodes.find((node) => node.id === edge.target);
+        return target?.data?.name === item.target;
+      };
+      const reverseSource = (edge: Edge, item: Trace) => {
+        const target = allNodes.find((node) => node.id === edge.target);
+        return target?.data?.name === item.source;
+      };
+      const reverseTarget = (edge: Edge, item: Trace) => {
+        const source = allNodes.find((node) => node.id === edge.source);
+        return source?.data?.name === item.target;
+      };
+      if (traceStack) {
+        const traces = items as Trace[];
+        const actives: any = {};
+        traces.forEach(trace => {
+          const existent = allEdges.find((edge) => {
+             return trace.activate
+               ? sameSource(edge, trace) && sameTarget(edge, trace)
+               : reverseSource(edge, trace) && reverseTarget(edge, trace);
+          });
+          if( existent ) {
+            if( trace.activate ) {
+              actives[ existent.id ] = existent;
+            } else {
+              delete actives[existent.id];
+            }
+          }
+        });
+        setActiveEdges( Object.values(actives) );
+      } else {
+        console.error("DISPLAY METRICS");
+      }
+    },
+    [traceStack, metricsStack],
+  );
+
+  React.useEffect(() => {
+    console.log('These are the traces', traceStack);
+    if (traceStack) {
+      setViewStackOpen(true);
+      setStack(traceStack.traces());
+    } else {
+      setViewStackOpen(false);
+    }
+  }, [traceStack]);
+
+  React.useEffect(() => {
+    if (metricsStack) {
+      setViewStackOpen(true);
+      setStack(metricsStack.metrics());
+    } else {
+      setViewStackOpen(false);
+    }
+  }, [metricsStack]);
+
   // Autoconexión tras crear
   React.useEffect(() => {
     if (!pendingAutoConnect) return;
@@ -637,6 +727,9 @@ function DiagramEditorImpl(
           setEdges: setAllEdges,
         }}
       >
+        {viewStackOpen && (
+          <StackView onClose={() => setViewStackOpen(false)} onSelect={(item) => activeStackRow(item)} items={stack} />
+        )}
         <ReactFlow
           nodesConnectable={isDesign}
           elementsSelectable={true}
@@ -740,16 +833,16 @@ function DiagramEditorImpl(
                 </div>
               )}
             </div>
-             <div
+            <div
               className="rf-align-control"
               onMouseEnter={() => setOpenMode(true)}
               onMouseLeave={() => setOpenMode(false)}
               onMouseDown={(e) => e.stopPropagation()}
             >
               <ControlButton onClick={toggleModeButtons}>
-                { mode === 'design' && <HandGrab />}
-                { mode === 'edit' && <SquarePen /> } 
-                { mode === 'readonly' && <Lock />}
+                {mode === 'design' && <HandGrab />}
+                {mode === 'edit' && <SquarePen />}
+                {mode === 'readonly' && <Lock />}
               </ControlButton>
               {openMode && (
                 <div
