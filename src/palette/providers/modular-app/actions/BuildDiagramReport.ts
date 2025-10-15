@@ -1,4 +1,4 @@
-import { DiagramDescriptor, NodeDescriptor } from '../../../../diagram/descriptor';
+import { DiagramDescriptor, EdgeDescriptor, NodeDescriptor } from '../../../../diagram/descriptor';
 import { DiagramElementType, NodeCategory } from '../../../DiagramElementType';
 
 export class BuildDiagramReport {
@@ -213,11 +213,28 @@ export class BuildDiagramReport {
   }
 
   private liNodeRef(n: NodeDescriptor): string {
+    return `<li>${this.liNodeRefDetail(n)}</li>`;
+  }
+
+  private liEdgeRef(e: EdgeDescriptor): string {
+    return `<li>${this.liNodeRefDetail(e.target)} ${this.edgeProperties(e)}</li>`;
+  }
+
+  private liNodeRefDetail(n: NodeDescriptor): string {
     const label = n.label();
     const desc = n.description();
     const t = n.typeTitle();
     const id = n.anchorId();
-    return `<li><a href="#${id}"><strong>${escapeHtml(label)}</strong></a> <small>(${escapeHtml(t)})</small>${desc ? ` — ${escapeHtml(desc)}` : ''}</li>`;
+    return `<a href="#${id}"><strong>${escapeHtml(label)}</strong></a> <small>(${escapeHtml(t)})</small>${desc ? ` — ${escapeHtml(desc)}` : ''}`;
+  }
+
+  private edgeProperties(e: EdgeDescriptor) {
+    const props = e.properties();
+    if (props) {
+      return `<pre>${preJson(props)}</pre>`;
+    } else {
+      return '';
+    }
   }
 
   private renderTypeNodes(filter: any, type: DiagramElementType, nodes: NodeDescriptor[], cat: NodeCategory): string {
@@ -242,19 +259,19 @@ export class BuildDiagramReport {
 
         const depsList = n
           .outgoingDependencies()
-          .map((t) => this.liNodeRef(t!))
+          .map((t) => this.liEdgeRef(t!))
           .join('\n');
         const dependentsList = n
           .incomingDependecies()
-          .map((s) => this.liNodeRef(s!))
+          .map((s) => this.liEdgeRef(s!))
           .join('\n');
         const parentsList = n
           .parentNodes()
-          .map((s) => this.liNodeRef(s!))
+          .map((s) => this.liEdgeRef(s!))
           .join('\n');
         const childrenList = n
           .childrenNodes()
-          .map((t) => this.liNodeRef(t!))
+          .map((t) => this.liEdgeRef(t!))
           .join('\n');
 
         const upstreamActors = cat === 'component' ? n.actors() : [];

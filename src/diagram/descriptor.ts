@@ -50,10 +50,19 @@ export class DiagramDescriptor {
       const parentEdges = doc.edges.filter((e) => isParentChild(e) && e.target === n.id);
       const childEdges = doc.edges.filter((e) => isParentChild(e) && e.source === n.id);
 
-      const depsList = outgoingLateral.map((e) => this.keys[e.target]);
-      const dependentsList = incomingLateral.map((e) => this.keys[e.source]);
-      const parentsList = parentEdges.map((e) => this.keys[e.source]);
-      const childrenList = childEdges.map((e) => this.keys[e.target]);
+      const mapEdge = (e: DiagramEdge): EdgeDescriptor => {
+        return new EdgeDescriptor({
+          id: e.id,
+          edge: e,
+          source: this.keys[e.source],
+          target: this.keys[e.target],
+        });
+      };
+
+      const depsList = outgoingLateral.map(mapEdge);
+      const dependentsList = incomingLateral.map(mapEdge);
+      const parentsList = parentEdges.map(mapEdge);
+      const childrenList = childEdges.map(mapEdge);
 
       n.bind({
         overlaps: overlaps,
@@ -130,13 +139,30 @@ export class DiagramDescriptor {
   }
 }
 
+export class EdgeDescriptor {
+  public readonly id: string;
+  public readonly edge: DiagramEdge;
+  public readonly source: NodeDescriptor;
+  public readonly target: NodeDescriptor;
+  public constructor(val: { id: string; edge: DiagramEdge; source: NodeDescriptor; target: NodeDescriptor }) {
+    this.id = val.id;
+    this.edge = val.edge;
+    this.source = val.source;
+    this.target = val.target;
+  }
+
+  public properties(): any {
+    return (this.edge as any).props ?? {};
+  }
+}
+
 export class NodeDescriptor {
   private maps = null as any;
   private nodeActors: NodeDescriptor[] = [];
-  private incoming: NodeDescriptor[] = [];
-  private outgoing: NodeDescriptor[] = [];
-  private parents: NodeDescriptor[] = [];
-  private childs: NodeDescriptor[] = [];
+  private incoming: EdgeDescriptor[] = [];
+  private outgoing: EdgeDescriptor[] = [];
+  private parents: EdgeDescriptor[] = [];
+  private childs: EdgeDescriptor[] = [];
   public constructor(
     public readonly id: string,
     public readonly node: DiagramNode,
@@ -146,10 +172,10 @@ export class NodeDescriptor {
   bind(val: {
     overlaps: any;
     actors: NodeDescriptor[];
-    incomig: NodeDescriptor[];
-    outgoing: NodeDescriptor[];
-    parents: NodeDescriptor[];
-    childs: NodeDescriptor[];
+    incomig: EdgeDescriptor[];
+    outgoing: EdgeDescriptor[];
+    parents: EdgeDescriptor[];
+    childs: EdgeDescriptor[];
   }) {
     this.maps = val.overlaps;
     this.nodeActors = val.actors;
@@ -159,19 +185,19 @@ export class NodeDescriptor {
     this.childs = val.childs;
   }
 
-  public incomingDependecies(): NodeDescriptor[] {
+  public incomingDependecies(): EdgeDescriptor[] {
     return this.incoming;
   }
 
-  public outgoingDependencies(): NodeDescriptor[] {
+  public outgoingDependencies(): EdgeDescriptor[] {
     return this.outgoing;
   }
 
-  public childrenNodes(): NodeDescriptor[] {
+  public childrenNodes(): EdgeDescriptor[] {
     return this.childs;
   }
 
-  public parentNodes(): NodeDescriptor[] {
+  public parentNodes(): EdgeDescriptor[] {
     return this.parents;
   }
 
